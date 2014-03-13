@@ -3,11 +3,10 @@ var Mandlebrot = require('./mandlebrot');
 var AsciiCanvas = require('./ascii_canvas');
 //##############################################################################
 var m = new Mandlebrot(-2,1,-1,1),
-    p = new AsciiCanvas(160,60),
+    p = new AsciiCanvas(195,65),
     i = 1;
 
 var run = function () {
-  console.log("------------------------------- "+i+" -------------------------------");
   m.compute(i, p);
   p.display();
   i+=1;
