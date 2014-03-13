@@ -1,4 +1,3 @@
-var ComplexPlane = require('./complex_plane');
 //##############################################################################
 function Mandlebrot(xMin, xMax, yMin, yMax) {
   this.xMin = xMin;
@@ -60,18 +59,4 @@ Mandlebrot.prototype.compute = function (iterations, plane) {
   }
 }
 //##############################################################################
-
-var m = new Mandlebrot(-2,1,-1,1);
-var p = new ComplexPlane(160,60);
-
-var i = 0;
-var doIt = function () {
-  console.log("=====> mandlebrot.js #69 --> i ["+i+"]");
-  m.compute(i, p);
-  p.display();
-  i+=1;
-  if (i < 50) {
-    setTimeout(doIt, 250);
-  }
-}
-doIt();
+module.exports = Mandlebrot;
