@@ -47,7 +47,7 @@ Mandlebrot.prototype.compute = function (iterations, canvas) {
         canvas.set(i, j, 0);
       }
       else
-      { 
+      {
         canvas.set(i, j, colour);
       }
 
@@ -59,4 +59,4 @@ Mandlebrot.prototype.compute = function (iterations, canvas) {
   }
 }
 //##############################################################################
-module.exports = Mandlebrot;
+// module.exports = Mandlebrot;

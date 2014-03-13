@@ -1,0 +1,14 @@
+<html>
+    <head>
+        <title>Mandlebrot (Canvas)</title>
+        <script src="mandlebrot.js" type="application/javascript"></script>
+        <script src="html_canvas.js" type="application/javascript"></script>
+    </head>
+    <canvas id="mandlebrot" width="1400" height="900"></canvas>
+    <script>
+        var m = new Mandlebrot(-2,1,-1,1),
+            c = new HtmlCanvas("mandlebrot");
+
+        m.compute(200, c);
+    </script>
+</html>
