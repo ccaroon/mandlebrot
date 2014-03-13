@@ -6,7 +6,7 @@ function Mandlebrot(xMin, xMax, yMin, yMax) {
   this.yMax = yMax;
 }
 //##############################################################################
-Mandlebrot.prototype.compute = function (iterations, plane) {
+Mandlebrot.prototype.compute = function (iterations, canvas) {
   var x,y;
   var xStep, yStep;
   var z,zi,newZ,newZI;
@@ -15,14 +15,14 @@ Mandlebrot.prototype.compute = function (iterations, plane) {
   var inSet;
 
   /* these are used for calculating the points corresponding to the pixels */
-  xStep = (this.xMax - this.xMin) / plane.width;
-  yStep = (this.yMax - this.yMin) / plane.height;
+  xStep = (this.xMax - this.xMin) / canvas.width;
+  yStep = (this.yMax - this.yMin) / canvas.height;
 
   x = this.xMin;
   y = this.yMin;
-  for (i = 0; i < plane.height; i++)
+  for (i = 0; i < canvas.height; i++)
   {
-    for (j = 0; j < plane.width; j++)
+    for (j = 0; j < canvas.width; j++)
     {
       z = 0;
       zi = 0;
@@ -44,11 +44,11 @@ Mandlebrot.prototype.compute = function (iterations, plane) {
 
       if (inSet)
       {
-        plane.set(i,j,' ');
+        canvas.set(i, j, 0);
       }
       else
       { 
-        plane.set(i,j,colour%9);
+        canvas.set(i, j, colour);
       }
 
       x += xStep;

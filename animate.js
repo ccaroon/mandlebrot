@@ -1,17 +1,18 @@
+#!/usr/bin/env node
 var Mandlebrot = require('./mandlebrot');
-var ComplexPlane = require('./complex_plane');
+var AsciiCanvas = require('./ascii_canvas');
 //##############################################################################
-var m = new Mandlebrot(-2,1,-1,1);
-var p = new ComplexPlane(160,60);
+var m = new Mandlebrot(-2,1,-1,1),
+    p = new AsciiCanvas(160,60),
+    i = 1;
 
-var i = 0;
-var doIt = function () {
-  console.log("=====> mandlebrot.js #69 --> i ["+i+"]");
+var run = function () {
+  console.log("------------------------------- "+i+" -------------------------------");
   m.compute(i, p);
   p.display();
   i+=1;
-  if (i < 50) {
-    setTimeout(doIt, 250);
+  if (i <= 50) {
+    setTimeout(run, 250);
   }
 }
-doIt();
+run();

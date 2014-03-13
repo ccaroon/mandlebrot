@@ -1,5 +1,5 @@
 //############################################################################
-function ComplexPlane (w, h) {
+function AsciiCanvas (w, h) {
   this.width  = w;
   this.height = h;
 
@@ -8,7 +8,7 @@ function ComplexPlane (w, h) {
   this._init();
 }
 //############################################################################
-ComplexPlane.prototype._init = function (value) {
+AsciiCanvas.prototype._init = function (value) {
   var r, c;
 
   if (value === undefined) {
@@ -24,16 +24,17 @@ ComplexPlane.prototype._init = function (value) {
 
 };
 //##############################################################################
-ComplexPlane.prototype.clear = function (value) {
+AsciiCanvas.prototype.clear = function (value) {
   this._init(value);
 };
 //############################################################################
-ComplexPlane.prototype.set = function (x,y,value) {
-  // var r, c;
-  this.plane[x][y] = value;
+AsciiCanvas.prototype.set = function (x,y,value) {
+  var color = value % 7 + 30;
+
+  this.plane[x][y] = "\033[1;"+color+"m*\033[0m";
 };
 //############################################################################
-ComplexPlane.prototype.display = function () {
+AsciiCanvas.prototype.display = function () {
   var r, c;
 
   for (r = 0; r < this.height; r+=1) {
@@ -46,4 +47,4 @@ ComplexPlane.prototype.display = function () {
 
 };
 // ############################################################################
-module.exports = ComplexPlane;
+module.exports = AsciiCanvas;
