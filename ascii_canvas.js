@@ -31,7 +31,7 @@ AsciiCanvas.prototype.clear = function (value) {
 AsciiCanvas.prototype.set = function (r,c,value) {
   var color = value % 7 + 30;
 
-  this.plane[r][c] = "\033[1;"+color+"m*\033[0m";
+  this.plane[r][c] = "\033[1;"+color+"m+\033[0m";
 };
 //##############################################################################
 AsciiCanvas.prototype.display = function () {

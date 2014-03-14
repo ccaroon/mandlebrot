@@ -59,4 +59,4 @@ Mandlebrot.prototype.compute = function (iterations, canvas) {
   }
 }
 //##############################################################################
-// module.exports = Mandlebrot;
+module.exports = Mandlebrot;
