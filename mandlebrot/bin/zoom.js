@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 var Mandlebrot  = require('../lib/mandlebrot');
-var AsciiCanvas = require('../lib/ascii_canvas');
+var AsciiCanvas = require('../../shared/lib/ascii_canvas');
 //##############################################################################
 var m = new Mandlebrot(-1, 1, -1, 1),
     p = new AsciiCanvas(160,60);
