@@ -1,2 +1,6 @@
-mandlebrot
-==========
+Games & Diversions
+==================
+
+Mandlebrot
+----------
+
