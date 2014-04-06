@@ -9,6 +9,7 @@
   "author": "Craig N. Caroon",
   "license": "ISC",
   "dependencies": {
-    "underscore": "~1.6.0"
+    "underscore": "~1.6.0",
+    "must": "~0.11.0"
   }
 }

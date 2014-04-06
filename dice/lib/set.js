@@ -14,7 +14,7 @@ function Set(sides, count) {
 Set.prototype.roll = function() {
   _.each(this.dice, function (d) {
     d.roll();
-  })
+  });
 };
 
 Set.prototype.total = function() {
