@@ -1,3 +1,5 @@
+var chalk    = require('chalk'),
+    colorMap = ['black', 'red', 'green', 'yellow', 'blue', 'magenta','cyan','white','gray'];
 //##############################################################################
 function AsciiCanvas (w, h) {
   this.width  = w;
@@ -29,9 +31,11 @@ AsciiCanvas.prototype.clear = function (value) {
 };
 //##############################################################################
 AsciiCanvas.prototype.set = function (r,c,value) {
-  var color = value % 7 + 30;
+  // var color = value % 7 + 30;
+  var color = value % 9;
 
-  this.plane[r][c] = "\033[1;"+color+"m+\033[0m";
+  // this.plane[r][c] = "\033[1;"+color+"m+\033[0m";
+  this.plane[r][c] = chalk[colorMap[color]]('+');
 };
 //##############################################################################
 AsciiCanvas.prototype.display = function () {
