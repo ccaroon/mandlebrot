@@ -3,12 +3,10 @@ function Ant(color) {
     // Private vars
     this._isDead = false;
     this._name   = color.toUpperCase() + " Ant";
-    this._currX  = Math.round(Math.random() * 600);
+    this._currX  = Math.round(Math.random() * 1200);
     this._currY  = Math.round(Math.random() * 600);
     this._campLocations = [];
     this._campID = 0;
-    this._following     = null;
-    this._followingSite = null;
     
     // Public attributes
     this.age   = 1;
@@ -16,17 +14,19 @@ function Ant(color) {
     this.nextDirection = Math.ceil(Math.random() * 8);
     this.lastAction    = null;
     this.daysCamping   = 0;
+    this.isFollowing   = false;
 }
 
 // Constants & Class Attrs/Methods
 Ant.ACTION_MOVE = "move";
 Ant.ACTION_CAMP = "camp";
 Ant.CAMP_SIZE   = 10;
+// wrap | bounce | die (default)
+Ant.EDGE_BEHAVIOR = "bounce"; 
 Ant.chooseDirection = function () {
     return (Math.ceil(Math.random() * 8));
 };
 
-// TODO: "bounce" off walls instead of wrap
 Ant.prototype.move  = function(distance, maxX, maxY) {
     var newX = this._currX, newY = this._currY;
 
@@ -61,30 +61,44 @@ Ant.prototype.move  = function(distance, maxX, maxY) {
             break;
     }
 
-    if (this._following) {
-
-    }
-    else {
-
-    }
-
     this.age += 1;
     this.lastAction    = Ant.ACTION_MOVE;
     this.nextDirection = Ant.chooseDirection();
     this.daysCamping   = 0;
 
-    // Wrap around edges
-    if (newX < 0) {
-        newX = maxX + newX;
+    if (Ant.EDGE_BEHAVIOR === "wrap") {
+        if (newX < 0) {
+            newX = maxX + newX;
+        }
+        if (newX > maxX) {
+            newX = newX - maxX;
+        }
+        if (newY < 0) {
+            newY = maxY + newY;
+        }
+        if (newY > maxY) {
+            newY = newY - maxY;
+        }
     }
-    if (newX > maxX) {
-        newX = newX - maxX;
+    else if (Ant.EDGE_BEHAVIOR === "bounce") {
+        if (newX < 0) {
+            newX = 0;
+        }
+        if (newX > maxX) {
+            newX = maxX;
+        }
+        if (newY < 0) {
+            newY = 0;
+        }
+        if (newY > maxY) {
+            newY = maxY;
+        }
     }
-    if (newY < 0) {
-        newY = maxY + newY;
-    }
-    if (newY > maxY) {
-        newY = newY - maxY;
+    else {
+        // Fall off and die
+        if (newX < 0 || newX > maxX || newY < 0 || newY > maxY) {
+            this._isDead = true;
+        }
     }
 
     this._currX = newX;
@@ -111,15 +125,13 @@ Ant.prototype.camp = function() {
     this.daysCamping += 1;
 };
 
-Ant.prototype.follow = function(ant, startingSiteID) {
-    var site = ant.getSiteInfo(startingSiteID);
+Ant.prototype.followTrail = function(ant, siteID) {
+    var site = ant.getSiteInfo(siteID);
 
-    this._following     = ant;
-
+    this.isFollowing = true;
     this._currX = site.location.x;
     this._currY = site.location.y;
     this.nextDirection = site.direction;
-    // this._followingSite = startingSiteID;
 };
 
 Ant.prototype.isDead = function() {
@@ -130,7 +142,8 @@ Ant.prototype.inCampSite = function(ant) {
     var i, site, siteID = null, antLoc = ant.getLocation(),
         siteTopLeft, siteBottomRight;
 
-    for (i = 0; i < this._campLocations.length; i+=1) {
+    // Reverse lookup. Want the most recent time at a site
+    for (i = this._campLocations.length-1; i >= 0; i-=1) {
         site = this._campLocations[i];
 
         siteTopLeft = {
