@@ -11,11 +11,11 @@ function Ants(elementId) {
     this.ant2 = new Ant("white");
 }
 
-// Class Attrs
+// Constants & Class Attrs
 Ants.DAY_LENGTH = 125;
 Ants.CAMP_LENGTH = 3;
-Ants.MIN_TRAVEL_DISTANCE = 15;
-Ants.MAX_TRAVEL_DISTANCE = 30;
+Ants.MIN_TRAVEL_DISTANCE = 20;
+Ants.MAX_TRAVEL_DISTANCE = 20;
 
 Ants.getDistance = function () {
     var d = Math.ceil(Math.random() * (Ants.MAX_TRAVEL_DISTANCE/2))+Ants.MIN_TRAVEL_DISTANCE;
@@ -32,15 +32,15 @@ Ants.prototype.drawBoundaries = function() {
 Ants.prototype.moveAnt = function(ant) {
     var currPos = ant.getLocation(),
         endPos, distance = Ants.getDistance();
-        endPos  = ant.move(distance);
+        endPos  = ant.move(distance,this.width, this.height);
 
-    this.field.lineWidth = 1;
-    this.field.strokeStyle = "black";//ant.color;
+    // this.field.lineWidth = 1;
+    // this.field.strokeStyle = "black";//ant.color;
 
-    this.field.beginPath();
-    this.field.moveTo(currPos[0], currPos[1]);
-    this.field.lineTo(endPos[0], endPos[1]);
-    this.field.stroke();
+    // this.field.beginPath();
+    // this.field.moveTo(currPos[0], currPos[1]);
+    // this.field.lineTo(endPos[0], endPos[1]);
+    // this.field.stroke();
 };
 
 Ants.prototype.setCamp = function(ant) {
@@ -55,7 +55,7 @@ Ants.prototype.placeMarker = function(ant) {
     this.field.fillRect(pos[0]-(Ant.CAMP_SIZE/2), pos[1]-(Ant.CAMP_SIZE/2), Ant.CAMP_SIZE, Ant.CAMP_SIZE);
 
     this.field.fillStyle = "black";
-    this.field.fillRect(pos[0], pos[1], 2, 2);
+    this.field.fillRect(pos[0], pos[1], 1, 1);
 
     if (lastSite) {
         this.field.fillStyle = ant.color;
@@ -91,16 +91,22 @@ Ants.prototype.run = function () {
     this.setCamp(this.ant2);
 
     a1 = setInterval(function () {
+        var siteID;
         self.animate(self.ant1, a1);
-        if (self.ant1.inCampSite(self.ant2)) {
-            console.log(self.ant2 + " is in " + self.ant1 + "'s camp site.");
+        siteID = self.ant2.inCampSite(self.ant1);
+        if (siteID) {
+            console.log(self.ant1 + " is in " + self.ant2 + "'s camp site #"+siteID+".");
+            // self.ant1.follow(self.ant2, siteID);
         }
     }, Ants.DAY_LENGTH);
 
     a2 = setInterval(function () {
+        var siteID;
         self.animate(self.ant2, a2);
-        if (self.ant2.inCampSite(self.ant1)) {
-            console.log(self.ant1 + " is in " + self.ant2 + "'s camp site.");
+        siteID = self.ant1.inCampSite(self.ant2);
+        if (siteID) {
+            console.log(self.ant2 + " is in " + self.ant1 + "'s camp site #"+siteID+".");
+            // self.ant2.follow(self.ant1, siteID);
         }
     }, Ants.DAY_LENGTH);
     

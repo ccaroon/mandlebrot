@@ -6,6 +6,9 @@ function Ant(color) {
     this._currX  = Math.round(Math.random() * 600);
     this._currY  = Math.round(Math.random() * 600);
     this._campLocations = [];
+    this._campID = 0;
+    this._following     = null;
+    this._followingSite = null;
     
     // Public attributes
     this.age   = 1;
@@ -15,16 +18,16 @@ function Ant(color) {
     this.daysCamping   = 0;
 }
 
-// Constants and Class Attrs/Methods
+// Constants & Class Attrs/Methods
 Ant.ACTION_MOVE = "move";
 Ant.ACTION_CAMP = "camp";
-Ant.CAMP_SIZE   = 7;
+Ant.CAMP_SIZE   = 10;
 Ant.chooseDirection = function () {
     return (Math.ceil(Math.random() * 8));
-}
+};
 
-// TODO: wrap around edges of field
-Ant.prototype.move  = function(distance) {
+// TODO: "bounce" off walls instead of wrap
+Ant.prototype.move  = function(distance, maxX, maxY) {
     var newX = this._currX, newY = this._currY;
 
     switch (this.nextDirection) {
@@ -58,16 +61,34 @@ Ant.prototype.move  = function(distance) {
             break;
     }
 
+    if (this._following) {
+
+    }
+    else {
+
+    }
+
     this.age += 1;
     this.lastAction    = Ant.ACTION_MOVE;
     this.nextDirection = Ant.chooseDirection();
     this.daysCamping   = 0;
 
+    // Wrap around edges
+    if (newX < 0) {
+        newX = maxX + newX;
+    }
+    if (newX > maxX) {
+        newX = newX - maxX;
+    }
+    if (newY < 0) {
+        newY = maxY + newY;
+    }
+    if (newY > maxY) {
+        newY = newY - maxY;
+    }
+
     this._currX = newX;
     this._currY = newY;
-    if (this._currX < 0 || this._currY < 0) {
-        this._isDead = true;
-    }
 
     return ([this._currX, this._currY]);
 };
@@ -76,7 +97,13 @@ Ant.prototype.camp = function() {
     var loc = this.getLocation();
 
     if (this.lastAction === Ant.ACTION_MOVE) {
-        this._campLocations.push({ location: {x: loc[0], y: loc[1]}, direction: this.nextDirection });
+        this._campLocations.push(
+            {
+                id:       this._campID++,
+                location: {x: loc[0], y: loc[1]}, 
+                direction: this.nextDirection
+            }
+        );
     }
 
     this.age += 1;
@@ -84,26 +111,54 @@ Ant.prototype.camp = function() {
     this.daysCamping += 1;
 };
 
+Ant.prototype.follow = function(ant, startingSiteID) {
+    var site = ant.getSiteInfo(startingSiteID);
+
+    this._following     = ant;
+
+    this._currX = site.location.x;
+    this._currY = site.location.y;
+    this.nextDirection = site.direction;
+    // this._followingSite = startingSiteID;
+};
+
 Ant.prototype.isDead = function() {
     return(this._isDead);
 };
 
 Ant.prototype.inCampSite = function(ant) {
-    var i, site, inSite = false, antLoc = ant.getLocation();;
+    var i, site, siteID = null, antLoc = ant.getLocation(),
+        siteTopLeft, siteBottomRight;
 
     for (i = 0; i < this._campLocations.length; i+=1) {
         site = this._campLocations[i];
-        if (site.location.x === antLoc[0] & site.location.y === antLoc[1]) {
-            inSite = true;
+
+        siteTopLeft = {
+            x: site.location.x - Ant.CAMP_SIZE,
+            y: site.location.y - Ant.CAMP_SIZE
+        };
+        siteBottomRight = {
+            x: site.location.x + Ant.CAMP_SIZE,
+            y: site.location.y + Ant.CAMP_SIZE
+        };
+
+        if (antLoc[0] > siteTopLeft.x && antLoc[0] < siteBottomRight.x &&
+            antLoc[1] > siteTopLeft.y && antLoc[1] < siteBottomRight.y) {
+            siteID = site.id;
             break;
         }
     }
 
-    return(inSite);
+    return(siteID);
 };
+
 
 Ant.prototype.lastCampSiteLocation = function() { 
     return(this._campLocations[this._campLocations.length-1]);
+};
+
+Ant.prototype.getSiteInfo = function(siteID) {
+    return (this._campLocations[siteID]);
 };
 
 Ant.prototype.getLocation = function() {
