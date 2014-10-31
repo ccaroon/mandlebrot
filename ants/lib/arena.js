@@ -1,18 +1,15 @@
-function Arena(elementId, numAnts) {
+function Arena(elementId) {
     var element = document.getElementById(elementId);
 
     this.width   = element.width;
     this.height  = element.height;
     this.display = element.getContext("2d");
 
-    this.ant1 = new Ant("red");
-    this.ant2 = new Ant("white");
-
     this.drawBoundaries();
 }
 
 // Constants & Class Attrs
-Arena.DAY_LENGTH = 60;
+Arena.DAY_LENGTH = 125;
 Arena.CAMP_LENGTH = 3;
 Arena.MIN_TRAVEL_DISTANCE = 30;
 Arena.MAX_TRAVEL_DISTANCE = 20;
@@ -124,8 +121,11 @@ Arena.prototype.eventLoop = function(thisAnt, otherAnt, thisInterval, otherInter
     }
 };
 
-Arena.prototype.start = function () {
+Arena.prototype.runSearch = function () {
     var self = this, a1, a2;
+
+    this.ant1 = new Ant("red");
+    this.ant2 = new Ant("white");
 
     this.setCamp(this.ant1);
     a1 = setInterval(function () {
@@ -138,3 +138,39 @@ Arena.prototype.start = function () {
     }, Arena.DAY_LENGTH);
     
 }
+
+
+Arena.prototype.runWander = function () {
+    var self = this, a, ants = [
+        new Ant("red"),
+        new Ant("lightgreen"),
+        new Ant("blue"),
+        new Ant("white")
+    ];
+
+    this.setCamp(ants[0]);
+    setInterval(function () {
+        self.act(ants[0]);
+    }, Arena.DAY_LENGTH);
+
+    this.setCamp(ants[1]);
+    setInterval(function () {
+        self.act(ants[1]);
+    }, Arena.DAY_LENGTH);
+
+    this.setCamp(ants[2]);
+    setInterval(function () {
+        self.act(ants[2]);
+    }, Arena.DAY_LENGTH);
+
+    this.setCamp(ants[3]);
+    setInterval(function () {
+        self.act(ants[3]);
+    }, Arena.DAY_LENGTH);
+    
+}
+
+
+
+
+

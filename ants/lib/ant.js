@@ -11,6 +11,7 @@ function Ant(color) {
     // Public attributes
     this.age   = 1;
     this.color = color;
+    this.lastDirection = null;
     this.nextDirection = Math.ceil(Math.random() * 8);
     this.lastAction    = null;
     this.daysCamping   = 0;
@@ -20,11 +21,19 @@ function Ant(color) {
 // Constants & Class Attrs/Methods
 Ant.ACTION_MOVE = "move";
 Ant.ACTION_CAMP = "camp";
-Ant.CAMP_SIZE   = 10;
+Ant.CAMP_SIZE   = 6;
 // wrap | bounce | die (default)
-Ant.EDGE_BEHAVIOR = "bounce"; 
-Ant.chooseDirection = function () {
-    return (Math.ceil(Math.random() * 8));
+Ant.EDGE_BEHAVIOR = "bounce";
+
+Ant.prototype.chooseDirection = function () {
+    var newDirection = null;
+
+    // Make sure we don't go back to where we just left
+    do {
+        newDirection = Math.ceil(Math.random() * 8);        
+    } while (Math.abs(newDirection - this.lastDirection) === 4);
+
+    return (newDirection);
 };
 
 Ant.prototype.move  = function(distance, maxX, maxY) {
@@ -63,7 +72,8 @@ Ant.prototype.move  = function(distance, maxX, maxY) {
 
     this.age += 1;
     this.lastAction    = Ant.ACTION_MOVE;
-    this.nextDirection = Ant.chooseDirection();
+    this.lastDirection = this.nextDirection;
+    this.nextDirection = this.chooseDirection();
     this.daysCamping   = 0;
 
     if (Ant.EDGE_BEHAVIOR === "wrap") {
