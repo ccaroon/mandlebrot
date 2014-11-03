@@ -11,48 +11,30 @@ function Arena(elementId) {
 // Constants & Class Attrs
 Arena.DAY_LENGTH = 125;
 Arena.CAMP_LENGTH = 3;
-Arena.MIN_TRAVEL_DISTANCE = 30;
-Arena.MAX_TRAVEL_DISTANCE = 20;
-
-Arena.inSameLocation = function (ant1, ant2) {
-    var loc1 = ant1.getLocation(),
-        loc2 = ant2.getLocation(),
-        isSame = false;;
-
-    if (loc1[0] === loc2[0] && loc1[1] === loc2[1]) {
-        isSame = true;
-    }
-
-    return(isSame);
-};
-
-Arena.getDistance = function () {
-    // var d = Math.ceil(Math.random() * (Arena.MAX_TRAVEL_DISTANCE/2))+Arena.MIN_TRAVEL_DISTANCE;
-    var d = Arena.MAX_TRAVEL_DISTANCE;
-
-    return(d);
-}
 
 Arena.prototype.drawBoundaries = function() {
-    this.display.fillStyle   = "white";
     this.display.strokeStyle = "white";
     this.display.strokeRect(0,0,this.width,this.height);
 };
 
 Arena.prototype.moveAnt = function(ant) {
     var currPos = ant.getLocation(),
-        endPos, distance = Arena.getDistance();
+        endPos, distance = ant.chooseDistance();
 
     endPos = ant.move(distance, this.width, this.height);
 
+    this.drawPath(ant, currPos, endPos);
+};
+
+Arena.prototype.drawPath = function (ant, startPos, endPos) {
     this.display.lineWidth   = 1;
     this.display.strokeStyle = ant.color;
 
     this.display.beginPath();
-    this.display.moveTo(currPos[0], currPos[1]);
-    this.display.lineTo(endPos[0], endPos[1]);
+    this.display.moveTo(startPos.x, startPos.y);
+    this.display.lineTo(endPos.x, endPos.y);
     this.display.stroke();
-};
+}
 
 Arena.prototype.setCamp = function(ant) {
     this.placeMarker(ant);
@@ -63,11 +45,11 @@ Arena.prototype.placeMarker = function(ant) {
     var pos = ant.getLocation(), lastSite = ant.lastCampSiteLocation();
 
     this.display.fillStyle = ant.color;
-    this.display.fillRect(pos[0]-(Ant.CAMP_SIZE/2), pos[1]-(Ant.CAMP_SIZE/2), Ant.CAMP_SIZE, Ant.CAMP_SIZE);
+    this.display.fillRect(pos.x-(Ant.CAMP_SIZE/2), pos.y-(Ant.CAMP_SIZE/2), Ant.CAMP_SIZE, Ant.CAMP_SIZE);
 
     // Mark current location
     this.display.fillStyle = "black";
-    this.display.fillRect(pos[0], pos[1], 2, 2);
+    this.display.fillRect(pos.x, pos.y, 2, 2);
     if (lastSite) {
         this.display.fillStyle = ant.color;
         this.display.fillRect(lastSite.location.x, lastSite.location.y, 2, 2);
@@ -105,7 +87,7 @@ Arena.prototype.eventLoop = function(thisAnt, otherAnt, thisInterval, otherInter
     if (siteID !== null) {
         console.log(thisAnt + " is in " + otherAnt + "'s camp site #"+siteID+".");
 
-        if (Arena.inSameLocation(thisAnt, otherAnt)) {
+        if (thisAnt.getLocation().equals(otherAnt.getLocation())) {
             console.log(thisAnt + " has found " + otherAnt);
             clearInterval(thisInterval);
             clearInterval(otherInterval);

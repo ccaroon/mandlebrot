@@ -3,8 +3,7 @@ function Ant(color) {
     // Private vars
     this._isDead = false;
     this._name   = color.toUpperCase() + " Ant";
-    this._currX  = Math.round(Math.random() * 1200);
-    this._currY  = Math.round(Math.random() * 600);
+    this._location = new Point(Math.round(Math.random() * 1200), Math.round(Math.random() * 600));
     this._campLocations = [];
     this._campID = 0;
     
@@ -24,6 +23,8 @@ Ant.ACTION_CAMP = "camp";
 Ant.CAMP_SIZE   = 6;
 // wrap | bounce | die (default)
 Ant.EDGE_BEHAVIOR = "bounce";
+Ant.MIN_DISTANCE = 15;
+Ant.MAX_DISTANCE = 30;
 
 Ant.prototype.chooseDirection = function () {
     var newDirection = null;
@@ -36,8 +37,14 @@ Ant.prototype.chooseDirection = function () {
     return (newDirection);
 };
 
+Ant.prototype.chooseDistance = function() {
+    // var d = _.random(Ant.MIN_DISTANCE, Ant.MAX_DISTANCE);
+    var d = 15;
+    return (d);
+};
+
 Ant.prototype.move  = function(distance, maxX, maxY) {
-    var newX = this._currX, newY = this._currY;
+    var newX = this._location.x, newY = this._location.y;
 
     switch (this.nextDirection) {
         case 1:
@@ -111,10 +118,9 @@ Ant.prototype.move  = function(distance, maxX, maxY) {
         }
     }
 
-    this._currX = newX;
-    this._currY = newY;
+    this._location = new Point(newX, newY);
 
-    return ([this._currX, this._currY]);
+    return (this._location);
 };
 
 Ant.prototype.camp = function() {
@@ -124,7 +130,7 @@ Ant.prototype.camp = function() {
         this._campLocations.push(
             {
                 id:       this._campID++,
-                location: {x: loc[0], y: loc[1]}, 
+                location: loc,
                 direction: this.nextDirection
             }
         );
@@ -139,8 +145,7 @@ Ant.prototype.followTrail = function(ant, siteID) {
     var site = ant.getSiteInfo(siteID);
 
     this.isFollowing = true;
-    this._currX = site.location.x;
-    this._currY = site.location.y;
+    this._location = site.location;
     this.nextDirection = site.direction;
 };
 
@@ -156,17 +161,11 @@ Ant.prototype.inCampSite = function(ant) {
     for (i = this._campLocations.length-1; i >= 0; i-=1) {
         site = this._campLocations[i];
 
-        siteTopLeft = {
-            x: site.location.x - Ant.CAMP_SIZE,
-            y: site.location.y - Ant.CAMP_SIZE
-        };
-        siteBottomRight = {
-            x: site.location.x + Ant.CAMP_SIZE,
-            y: site.location.y + Ant.CAMP_SIZE
-        };
+        siteTopLeft     = new Point(site.location.x - Ant.CAMP_SIZE, site.location.y - Ant.CAMP_SIZE);
+        siteBottomRight = new Point(site.location.x + Ant.CAMP_SIZE, site.location.y + Ant.CAMP_SIZE);
 
-        if (antLoc[0] > siteTopLeft.x && antLoc[0] < siteBottomRight.x &&
-            antLoc[1] > siteTopLeft.y && antLoc[1] < siteBottomRight.y) {
+        if (antLoc.x > siteTopLeft.x && antLoc.x < siteBottomRight.x &&
+            antLoc.y > siteTopLeft.y && antLoc.y < siteBottomRight.y) {
             siteID = site.id;
             break;
         }
@@ -185,7 +184,7 @@ Ant.prototype.getSiteInfo = function(siteID) {
 };
 
 Ant.prototype.getLocation = function() {
-    return ([this._currX, this._currY]);
+    return (this._location);
 };
 
 Ant.prototype.toString = function() {
