@@ -124,14 +124,21 @@ Ant.prototype.move  = function(distance, maxX, maxY) {
 };
 
 Ant.prototype.camp = function() {
-    var loc = this.getLocation();
+    var loc = this.getLocation(), boundaries;
 
     if (this.lastAction === Ant.ACTION_MOVE) {
+        boundaries = new Rectangle(
+            loc.x - (Ant.CAMP_SIZE/2), 
+            loc.y - (Ant.CAMP_SIZE/2),
+            Ant.CAMP_SIZE, 
+            Ant.CAMP_SIZE
+        );
         this._campLocations.push(
             {
-                id:       this._campID++,
-                location: loc,
-                direction: this.nextDirection
+                id:         this._campID++,
+                location:   loc,
+                boundaries: boundaries,
+                direction:  this.nextDirection
             }
         );
     }
@@ -154,18 +161,13 @@ Ant.prototype.isDead = function() {
 };
 
 Ant.prototype.inCampSite = function(ant) {
-    var i, site, siteID = null, antLoc = ant.getLocation(),
-        siteTopLeft, siteBottomRight;
+    var i, site, siteID = null, antLoc = ant.getLocation();
 
     // Reverse lookup. Want the most recent time at a site
     for (i = this._campLocations.length-1; i >= 0; i-=1) {
         site = this._campLocations[i];
 
-        siteTopLeft     = new Point(site.location.x - Ant.CAMP_SIZE, site.location.y - Ant.CAMP_SIZE);
-        siteBottomRight = new Point(site.location.x + Ant.CAMP_SIZE, site.location.y + Ant.CAMP_SIZE);
-
-        if (antLoc.x > siteTopLeft.x && antLoc.x < siteBottomRight.x &&
-            antLoc.y > siteTopLeft.y && antLoc.y < siteBottomRight.y) {
+        if (site.boundaries.containsPoint(antLoc)) {
             siteID = site.id;
             break;
         }
@@ -174,6 +176,21 @@ Ant.prototype.inCampSite = function(ant) {
     return(siteID);
 };
 
+Ant.prototype.crossesCampSite = function(path) {
+    var i, site, siteID = null;
+
+    // Reverse lookup. Want the most recent time at a site
+    for (i = this._campLocations.length-1; i >= 0; i-=1) {
+        site = this._campLocations[i];
+
+        if (path.intersectRect(site.boundaries)) {
+            siteID = site.id;
+            break;
+        }
+    }
+
+    return(siteID);
+};
 
 Ant.prototype.lastCampSiteLocation = function() { 
     return(this._campLocations[this._campLocations.length-1]);

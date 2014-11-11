@@ -18,21 +18,28 @@ Arena.prototype.drawBoundaries = function() {
 };
 
 Arena.prototype.moveAnt = function(ant) {
-    var currPos = ant.getLocation(),
-        endPos, distance = ant.chooseDistance();
+    var startPos = ant.getLocation(), endPos, 
+        distance = ant.chooseDistance();
 
     endPos = ant.move(distance, this.width, this.height);
 
-    this.drawPath(ant, currPos, endPos);
+    path = new Line(startPos, endPos);
+
+    this.drawPath(ant, startPos, endPos);
+
+    return(path);
 };
 
 Arena.prototype.drawPath = function (ant, startPos, endPos) {
     this.display.lineWidth   = 1;
     this.display.strokeStyle = ant.color;
+    this.drawLine(new Line(startPos, endPos));
+}
 
+Arena.prototype.drawLine = function (line) {
     this.display.beginPath();
-    this.display.moveTo(startPos.x, startPos.y);
-    this.display.lineTo(endPos.x, endPos.y);
+    this.display.moveTo(line.p1.x, line.p1.y);
+    this.display.lineTo(line.p2.x, line.p2.y);
     this.display.stroke();
 }
 
@@ -58,49 +65,74 @@ Arena.prototype.placeMarker = function(ant) {
 };
 
 Arena.prototype.act = function(ant) {
+    var path = null;
+
     if (ant.isFollowing) {
-        this.moveAnt(ant);
+        path = this.moveAnt(ant);
         this.placeMarker(ant);
     }
     else if (ant.lastAction === Ant.ACTION_CAMP) {
         if (ant.daysCamping === Arena.CAMP_LENGTH) {
-            this.moveAnt(ant);
+            path = this.moveAnt(ant);
             this.setCamp(ant);
         }
         else {
             ant.camp();
         }
     }
+
+    return(path);
 };
 
 Arena.prototype.eventLoop = function(thisAnt, otherAnt, thisInterval, otherInterval) {
-    var lastSite, siteID;
+    var lastSite, siteID, path;
 
-    this.act(thisAnt);
+    path = this.act(thisAnt);
     if (thisAnt.isDead() || thisAnt.age > (365*10)) {
         lastSite = thisAnt.lastCampSiteLocation();
         console.log(thisAnt + " died at camp site #"+lastSite.id);
         clearInterval(thisInterval);
     }
 
-    siteID = otherAnt.inCampSite(thisAnt);
-    if (siteID !== null) {
-        console.log(thisAnt + " is in " + otherAnt + "'s camp site #"+siteID+".");
+    if (path !== null) {
+        siteID = otherAnt.crossesCampSite(path);
+        if (siteID !== null) {
+            console.log(thisAnt + " is in " + otherAnt + "'s camp site #"+siteID+".");
 
-        if (thisAnt.getLocation().equals(otherAnt.getLocation())) {
-            console.log(thisAnt + " has found " + otherAnt);
-            clearInterval(thisInterval);
-            clearInterval(otherInterval);
-            thisAnt.color="green";
-            this.placeMarker(thisAnt);
+            if (thisAnt.getLocation().equals(otherAnt.getLocation())) {
+                console.log(thisAnt + " has found " + otherAnt);
+                clearInterval(thisInterval);
+                clearInterval(otherInterval);
+                thisAnt.color="green";
+                this.placeMarker(thisAnt);
+            }
+            else {
+                thisAnt.followTrail(otherAnt, siteID);
+            }
         }
         else {
-            thisAnt.followTrail(otherAnt, siteID);
+            thisAnt.isFollowing = false;
         }
     }
-    else {
-        thisAnt.isFollowing = false;
-    }
+
+    // siteID = otherAnt.inCampSite(thisAnt);
+    // if (siteID !== null) {
+    //     console.log(thisAnt + " is in " + otherAnt + "'s camp site #"+siteID+".");
+
+    //     if (thisAnt.getLocation().equals(otherAnt.getLocation())) {
+    //         console.log(thisAnt + " has found " + otherAnt);
+    //         clearInterval(thisInterval);
+    //         clearInterval(otherInterval);
+    //         thisAnt.color="green";
+    //         this.placeMarker(thisAnt);
+    //     }
+    //     else {
+    //         thisAnt.followTrail(otherAnt, siteID);
+    //     }
+    // }
+    // else {
+    //     thisAnt.isFollowing = false;
+    // }
 };
 
 Arena.prototype.runSearch = function () {
@@ -120,39 +152,3 @@ Arena.prototype.runSearch = function () {
     }, Arena.DAY_LENGTH);
     
 }
-
-
-Arena.prototype.runWander = function () {
-    var self = this, a, ants = [
-        new Ant("red"),
-        new Ant("lightgreen"),
-        new Ant("blue"),
-        new Ant("white")
-    ];
-
-    this.setCamp(ants[0]);
-    setInterval(function () {
-        self.act(ants[0]);
-    }, Arena.DAY_LENGTH);
-
-    this.setCamp(ants[1]);
-    setInterval(function () {
-        self.act(ants[1]);
-    }, Arena.DAY_LENGTH);
-
-    this.setCamp(ants[2]);
-    setInterval(function () {
-        self.act(ants[2]);
-    }, Arena.DAY_LENGTH);
-
-    this.setCamp(ants[3]);
-    setInterval(function () {
-        self.act(ants[3]);
-    }, Arena.DAY_LENGTH);
-    
-}
-
-
-
-
-

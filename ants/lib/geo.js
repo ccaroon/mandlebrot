@@ -66,10 +66,26 @@ function Rectangle (x, y, w, h) {
     this.width = w;
     this.height = h;
 
-    this.top    = new Line(new Point(x,y), new Point(w,y));
-    this.right  = new Line(new Point(w,y), new Point(w,h));
-    this.bottom = new Line(new Point(w,h), new Point(x,h));
-    this.left   = new Line(new Point(x,h), new Point(x,y));
+    this.topLeft     = new Point(x, y);
+    this.topRight    = new Point(x+w, y);
+    this.bottomLeft  = new Point(x, y+h);
+    this.bottomRight = new Point(x+w, y+h);
+
+    this.top    = new Line(this.topLeft,    this.topRight);
+    this.right  = new Line(this.topRight,   this.bottomRight);
+    this.bottom = new Line(this.bottomLeft, this.bottomRight);
+    this.left   = new Line(this.topLeft,    this.bottomLeft);
 
     this.sides = [this.top, this.right, this.bottom, this.left];
 }
+
+Rectangle.prototype.containsPoint = function(point) {
+    var containsPoint = false;
+
+    if (point.x >= this.topLeft.x && point.x <= this.bottomRight.x &&
+        point.y >= this.topLeft.y && point.y <= this.bottomRight.y) {
+        containsPoint = true;
+    } 
+
+    return (containsPoint);
+};
