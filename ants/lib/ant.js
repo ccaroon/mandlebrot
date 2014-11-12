@@ -1,9 +1,9 @@
-function Ant(color) {
+function Ant(color, startPos) {
 
     // Private vars
     this._isDead = false;
     this._name   = color.toUpperCase() + " Ant";
-    this._location = new Point(Math.round(Math.random() * 1200), Math.round(Math.random() * 600));
+    this._location = startPos;
     this._campLocations = [];
     this._campID = 0;
     
@@ -20,11 +20,11 @@ function Ant(color) {
 // Constants & Class Attrs/Methods
 Ant.ACTION_MOVE = "move";
 Ant.ACTION_CAMP = "camp";
-Ant.CAMP_SIZE   = 6;
+Ant.CAMP_SIZE   = 10;
 // wrap | bounce | die (default)
 Ant.EDGE_BEHAVIOR = "bounce";
-Ant.MIN_DISTANCE = 15;
-Ant.MAX_DISTANCE = 30;
+Ant.MIN_DISTANCE = 30;
+Ant.MAX_DISTANCE = 50;
 
 Ant.prototype.chooseDirection = function () {
     var newDirection = null;
@@ -38,8 +38,8 @@ Ant.prototype.chooseDirection = function () {
 };
 
 Ant.prototype.chooseDistance = function() {
-    // var d = _.random(Ant.MIN_DISTANCE, Ant.MAX_DISTANCE);
-    var d = 15;
+    var d = _.random(Ant.MIN_DISTANCE, Ant.MAX_DISTANCE);
+    // var d = 15;
     return (d);
 };
 
@@ -149,7 +149,7 @@ Ant.prototype.camp = function() {
 };
 
 Ant.prototype.followTrail = function(ant, siteID) {
-    var site = ant.getSiteInfo(siteID);
+    var site = ant.getCampSite(siteID);
 
     this.isFollowing = true;
     this._location = site.location;
@@ -177,26 +177,28 @@ Ant.prototype.inCampSite = function(ant) {
 };
 
 Ant.prototype.crossesCampSite = function(path) {
-    var i, site, siteID = null;
+    var i, site = null;
 
     // Reverse lookup. Want the most recent time at a site
     for (i = this._campLocations.length-1; i >= 0; i-=1) {
         site = this._campLocations[i];
 
         if (path.intersectRect(site.boundaries)) {
-            siteID = site.id;
             break;
+        }
+        else {
+            site = null;
         }
     }
 
-    return(siteID);
+    return(site);
 };
 
 Ant.prototype.lastCampSiteLocation = function() { 
     return(this._campLocations[this._campLocations.length-1]);
 };
 
-Ant.prototype.getSiteInfo = function(siteID) {
+Ant.prototype.getCampSite = function(siteID) {
     return (this._campLocations[siteID]);
 };
 
