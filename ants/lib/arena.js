@@ -65,58 +65,53 @@ Arena.prototype.placeMarker = function(ant) {
 
 };
 
-Arena.prototype.act = function(ant) {
-    var path = null;
+Arena.prototype.eventLoop = function(thisAnt, otherAnt, thisInterval, otherInterval) {
+    var lastSite, site, path = null;
 
-    if (ant.isFollowing) {
-        path = this.moveAnt(ant);
-        this.placeMarker(ant);
+    if (thisAnt.isFollowing) {
+        path = this.moveAnt(thisAnt);
     }
-    else if (ant.lastAction === Ant.ACTION_CAMP) {
-        if (ant.daysCamping === Arena.CAMP_LENGTH) {
-            path = this.moveAnt(ant);
-            this.setCamp(ant);
+    else if (thisAnt.lastAction === Ant.ACTION_CAMP) {
+        if (thisAnt.daysCamping === Arena.CAMP_LENGTH) {
+            path = this.moveAnt(thisAnt);
         }
         else {
-            ant.camp();
+            thisAnt.camp();
         }
     }
 
-    return(path);
-};
-
-Arena.prototype.eventLoop = function(thisAnt, otherAnt, thisInterval, otherInterval) {
-    var lastSite, site, path;
-
-    path = this.act(thisAnt);
-    if (thisAnt.isDead() || thisAnt.age > (365*10)) {
-        lastSite = thisAnt.lastCampSiteLocation();
-        console.log(thisAnt + " died at camp site #"+lastSite.id);
-        clearInterval(thisInterval);
-    }
-
-    if (path !== null) {
+    if (thisAnt.lastAction === Ant.ACTION_MOVE) {
         site = otherAnt.crossesCampSite(path);
         if (site !== null) {
-            console.log(thisAnt + " is in " + otherAnt + "'s camp site #"+site.id+".");
+            console.log(thisAnt + " crossed " + otherAnt + "'s camp site #"+site.id+".");
 
-            if (thisAnt.getLocation().equals(otherAnt.getLocation())) {
-                console.log(thisAnt + " has found " + otherAnt);
-                clearInterval(thisInterval);
-                clearInterval(otherInterval);
-                thisAnt.color="green";
-                this.placeMarker(thisAnt);
-            }
-            else {
-                thisAnt.followTrail(otherAnt, site.id);
-                this.drawPath(thisAnt, path.p1, site.location);
-            }
+            thisAnt.followTrail(otherAnt, site.id);
+            this.drawPath(thisAnt, path.p1, site.location);
         }
         else {
             thisAnt.isFollowing = false;
             this.drawPath(thisAnt, path.p1, path.p2);
         }
     }
+
+    this.setCamp(thisAnt);
+
+    // Did thisAnt find otherAnt?
+    if (thisAnt.getLocation().equals(otherAnt.getLocation())) {
+        console.log(thisAnt + " has found " + otherAnt);
+        clearInterval(thisInterval);
+        clearInterval(otherInterval);
+        thisAnt.color="green";
+        this.placeMarker(thisAnt);
+    }
+
+    // is thisAnt dead or has it been toooo loooonnnngggg?
+    if (thisAnt.isDead() || thisAnt.age > (365*10)) {
+        lastSite = thisAnt.lastCampSiteLocation();
+        console.log(thisAnt + " died at camp site #"+lastSite.id);
+        clearInterval(thisInterval);
+    }
+
 };
 
 Arena.prototype.runSearch = function () {
