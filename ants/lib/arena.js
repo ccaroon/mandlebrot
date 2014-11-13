@@ -35,14 +35,14 @@ Arena.prototype.drawPath = function (ant, startPos, endPos) {
     this.display.lineWidth   = 1;
     this.display.strokeStyle = ant.color;
     this.drawLine(new Line(startPos, endPos));
-}
+};
 
 Arena.prototype.drawLine = function (line) {
     this.display.beginPath();
     this.display.moveTo(line.p1.x, line.p1.y);
     this.display.lineTo(line.p2.x, line.p2.y);
     this.display.stroke();
-}
+};
 
 Arena.prototype.setCamp = function(ant) {
     this.placeMarker(ant);
@@ -136,4 +136,4 @@ Arena.prototype.runSearch = function () {
         self.eventLoop(self.ant2, self.ant1, a2, a1);
     }, Arena.DAY_LENGTH);
     
-}
+};
