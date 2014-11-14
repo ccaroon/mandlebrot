@@ -22,7 +22,7 @@ Arena.prototype.drawBoundaries = function() {
 
 Arena.prototype.moveAnt = function(ant) {
     var startPos = ant.getLocation(), endPos, 
-        distance = ant.chooseDistance();
+        distance = ant.chooseDistance(), path;
 
     endPos = ant.move(distance, this.width, this.height);
 

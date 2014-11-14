@@ -24,22 +24,22 @@ function Line (p1, p2) {
 }
 
 Line.prototype.intersectLine = function(otherLine) {
-    var s1_x, s1_y, s2_x, s2_y, s, t, i = null;
+    var s1X, s1Y, s2X, s2Y, iX, iY, s, t, i = null;
 
-    s1_x = this.p2.x - this.p1.x;     
-    s1_y = this.p2.y - this.p1.y;
-    s2_x = otherLine.p2.x - otherLine.p1.x;
-    s2_y = otherLine.p2.y - otherLine.p1.y;
+    s1X = this.p2.x - this.p1.x;     
+    s1Y = this.p2.y - this.p1.y;
+    s2X = otherLine.p2.x - otherLine.p1.x;
+    s2Y = otherLine.p2.y - otherLine.p1.y;
 
-    s = (-s1_y * (this.p1.x - otherLine.p1.x) + s1_x * (this.p1.y - otherLine.p1.y)) / (-s2_x * s1_y + s1_x * s2_y);
-    t = ( s2_x * (this.p1.y - otherLine.p1.y) - s2_y * (this.p1.x - otherLine.p1.x)) / (-s2_x * s1_y + s1_x * s2_y);
+    s = (-s1Y * (this.p1.x - otherLine.p1.x) + s1X * (this.p1.y - otherLine.p1.y)) / (-s2X * s1Y + s1X * s2Y);
+    t = ( s2X * (this.p1.y - otherLine.p1.y) - s2Y * (this.p1.x - otherLine.p1.x)) / (-s2X * s1Y + s1X * s2Y);
 
     if (s >= 0 && s <= 1 && t >= 0 && t <= 1)
     {
         // Collision detected
-        i_x = this.p1.x + (t * s1_x);
-        i_y = this.p1.y + (t * s1_y);
-        i = new Point(i_x, i_y);
+        iX = this.p1.x + (t * s1X);
+        iY = this.p1.y + (t * s1Y);
+        i = new Point(iX, iY);
     }
 
     return (i);

@@ -5,13 +5,22 @@ module.exports = function(grunt) {
     jshint: {
         options: {
             browser: true,
+            devel: true,
             eqeqeq: true,
             camelcase: true,
             curly: true,
             indent: 4,
             noempty: true,
             undef: true,
-            unused: true
+            unused: true,
+            globals: {
+              _: true,
+              Point: true,
+              Line: true,
+              Rectangle: true,
+              Ant: true,
+              Arena: true
+            }
         },
         file: ['lib/*.js']
     }
