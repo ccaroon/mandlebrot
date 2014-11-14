@@ -20,11 +20,11 @@ function Ant(color, startPos) {
 // Constants & Class Attrs/Methods
 Ant.ACTION_MOVE = "move";
 Ant.ACTION_CAMP = "camp";
-Ant.CAMP_SIZE   = 10;
+Ant.CAMP_SIZE   = 6;
 // wrap | bounce | die (default)
 Ant.EDGE_BEHAVIOR = "bounce";
-Ant.MIN_DISTANCE = 30;
-Ant.MAX_DISTANCE = 50;
+Ant.MIN_DISTANCE = 15;
+Ant.MAX_DISTANCE = 30;
 
 Ant.prototype.chooseDirection = function () {
     var newDirection = null;
