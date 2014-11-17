@@ -29,15 +29,16 @@ Ant.MAX_DISTANCE = 30;
 Ant.prototype.chooseDirection = function () {
     var newDirection = null;
 
+    this.lastDirection = this.nextDirection;
     // Make sure we don't go back to where we just left
     do {
         newDirection = Math.ceil(Math.random() * 8);        
     } while (Math.abs(newDirection - this.lastDirection) === 4);
 
-    return (newDirection);
+    this.nextDirection = newDirection;
 };
 
-Ant.prototype.chooseDistance = function() {
+Ant.chooseDistance = function() {
     var d = _.random(Ant.MIN_DISTANCE, Ant.MAX_DISTANCE);
     // var d = 15;
     return (d);
@@ -79,8 +80,7 @@ Ant.prototype.move  = function(distance, maxX, maxY) {
 
     this.age += 1;
     this.lastAction    = Ant.ACTION_MOVE;
-    this.lastDirection = this.nextDirection;
-    this.nextDirection = this.chooseDirection();
+    this.chooseDirection();
     this.daysCamping   = 0;
 
     if (Ant.EDGE_BEHAVIOR === "wrap") {

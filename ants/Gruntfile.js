@@ -1,36 +1,49 @@
 module.exports = function(grunt) {
 
-  // Project configuration.
-  grunt.initConfig({
-    jshint: {
-        options: {
-            browser: true,
-            devel: true,
-            eqeqeq: true,
-            camelcase: true,
-            curly: true,
-            indent: 4,
-            noempty: true,
-            undef: true,
-            unused: true,
-            globals: {
-              _: true,
-              Point: true,
-              Line: true,
-              Rectangle: true,
-              Ant: true,
-              Arena: true
-            }
+    // Project configuration.
+    grunt.initConfig({
+        jshint: {
+            options: {
+                browser: true,
+                devel: true,
+                eqeqeq: true,
+                camelcase: true,
+                curly: true,
+                indent: 4,
+                noempty: true,
+                undef: true,
+                unused: true,
+                globals: {
+                  _: true,
+                  Point: true,
+                  Line: true,
+                  Rectangle: true,
+                  Ant: true,
+                  Arena: true,
+                  describe: true,
+                  expect: true,
+                  it: true
+                }
+            },
+            file: [
+                'lib/*.js',
+                'test/*.js'
+            ]
         },
-        file: ['lib/*.js']
-    }
 
-  });
+        karma: {
+            unit: {
+                configFile: 'karma.conf.js',
+                singleRun: true
+            }
+        }
+    });
 
-  // Load the plugin that provides the "uglify" task.
-  grunt.loadNpmTasks('grunt-contrib-jshint');
+    grunt.loadNpmTasks('grunt-contrib-jshint');
+    grunt.loadNpmTasks('grunt-karma');
 
-  // Default task(s).
-  grunt.registerTask('default', ['jshint']);
+    // Default task(s).
+    grunt.registerTask('default', ['jshint']);
+    grunt.registerTask('spec', ['karma']);
 
 };
