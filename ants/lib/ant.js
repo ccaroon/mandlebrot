@@ -21,10 +21,22 @@ function Ant(color, startPos) {
 Ant.ACTION_MOVE = "move";
 Ant.ACTION_CAMP = "camp";
 Ant.CAMP_SIZE   = 6;
-// wrap | bounce | die (default)
-Ant.EDGE_BEHAVIOR = "bounce";
+
+Ant.EDGE_HIT_WALL = 1;
+Ant.EDGE_FALL_OFF = 2;
+Ant.EDGE_WRAP     = 3;
+Ant.EDGE_BEHAVIOR = Ant.EDGE_HIT_WALL;
+
 Ant.MIN_DISTANCE = 15;
 Ant.MAX_DISTANCE = 30;
+Ant.N  = 1;
+Ant.NE = 2;
+Ant.E  = 3;
+Ant.SE = 4;
+Ant.S  = 5;
+Ant.SW = 6;
+Ant.W  = 7;
+Ant.NW = 8;
 
 Ant.prototype.chooseDirection = function () {
     var newDirection = null;
@@ -48,31 +60,31 @@ Ant.prototype.move  = function(distance, maxX, maxY) {
     var newX = this._location.x, newY = this._location.y;
 
     switch (this.nextDirection) {
-        case 1:
+        case Ant.N:
             newY -= distance;
             break;
-        case 2:
+        case Ant.NE:
             newX += distance;
             newY -= distance;
             break;
-        case 3:
+        case Ant.E:
             newX += distance;
             break;
-        case 4:
+        case Ant.SE:
             newX += distance;
             newY += distance;
             break;
-        case 5:
+        case Ant.S:
             newY += distance;
             break;
-        case 6:
+        case Ant.SW:
             newX -= distance;
             newY += distance;
             break;
-        case 7:
+        case Ant.W:
             newX -= distance;
             break;
-        case 8:
+        case Ant.NW:
             newX -= distance;
             newY -= distance;
             break;
@@ -83,7 +95,7 @@ Ant.prototype.move  = function(distance, maxX, maxY) {
     this.chooseDirection();
     this.daysCamping   = 0;
 
-    if (Ant.EDGE_BEHAVIOR === "wrap") {
+    if (Ant.EDGE_BEHAVIOR === Ant.EDGE_WRAP) {
         if (newX < 0) {
             newX = maxX + newX;
         }
@@ -97,7 +109,7 @@ Ant.prototype.move  = function(distance, maxX, maxY) {
             newY = newY - maxY;
         }
     }
-    else if (Ant.EDGE_BEHAVIOR === "bounce") {
+    else if (Ant.EDGE_BEHAVIOR === Ant.EDGE_HIT_WALL) {
         if (newX < 0) {
             newX = 0;
         }
@@ -112,7 +124,7 @@ Ant.prototype.move  = function(distance, maxX, maxY) {
         }
     }
     else {
-        // Fall off and die
+        // EDGE_FALL_OFF
         if (newX < 0 || newX > maxX || newY < 0 || newY > maxY) {
             this._isDead = true;
         }
