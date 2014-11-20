@@ -5,7 +5,7 @@ function Ant(color, startPos) {
     this._name   = color.toUpperCase() + " Ant";
     this._location = startPos;
     this._campLocations = [];
-    this._campID = 0;
+    this._campID = 1;
     
     // Public attributes
     this.age   = 1;
@@ -211,7 +211,7 @@ Ant.prototype.lastCampSiteLocation = function() {
 };
 
 Ant.prototype.getCampSite = function(siteID) {
-    return (this._campLocations[siteID]);
+    return (this._campLocations[siteID-1]);
 };
 
 Ant.prototype.getLocation = function() {
