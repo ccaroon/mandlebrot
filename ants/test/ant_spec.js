@@ -279,6 +279,28 @@ describe ("Ant", function () {
 
             done();
         });
+
+        it("should be able to determine if it's in another ant's camp site", function (done) {
+            var i, randomSite, siteId,
+                redAnt = new Ant("red", new Point(50,50)),
+                blackAnt = new Ant("black", new Point(50,50));
+
+            // move and camp the red ant a bit
+            for (i = 0; i < 10; i+=1) {
+                redAnt.move(15, 100, 100);
+                redAnt.camp();
+            }
+
+            randomSite = _.random(9)+1;
+            blackAnt.followTrail(redAnt, randomSite);
+            siteId = redAnt.inCampSite(blackAnt);
+            expect(siteId).to.exist;
+            siteId.should.equal(randomSite);
+
+            done();
+        });
+
+        it("shoule be able to determine if path crosses another ant's camp site");
     });
 
 });
