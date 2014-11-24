@@ -286,12 +286,13 @@ describe ("Ant", function () {
                 blackAnt = new Ant("black", new Point(50,50));
 
             // move and camp the red ant a bit
-            for (i = 0; i < 10; i+=1) {
+            for (i = Ant.N; i <= Ant.NW; i+=1) {
+                redAnt.nextDirection = i;
                 redAnt.move(15, 100, 100);
                 redAnt.camp();
             }
 
-            randomSite = _.random(9)+1;
+            randomSite = _.random(Ant.NW-1)+1;
             blackAnt.followTrail(redAnt, randomSite);
             siteId = redAnt.inCampSite(blackAnt);
             expect(siteId).to.exist;
@@ -300,7 +301,33 @@ describe ("Ant", function () {
             done();
         });
 
-        it("shoule be able to determine if path crosses another ant's camp site");
+        it("should be able to determine if path crosses another ant's camp site", function (done) {
+            var i, path, site,
+                redAnt = new Ant("red", new Point(50,50)),
+                blackAnt = new Ant("black", new Point(65,45));
+
+            // move and camp the red ant a bit
+            for (i = Ant.N; i <= Ant.NW; i+=1) {
+                redAnt.nextDirection = i;
+                redAnt.move(10, 100, 100);
+                redAnt.camp();
+            }
+
+            blackAnt.nextDirection = Ant.N;
+            blackAnt.move(10, 100, 100);
+            blackAnt.camp();
+
+            blackAnt.nextDirection = Ant.NW;
+            blackAnt.move(10, 100, 100);
+
+            path = new Line(blackAnt.lastCampSiteLocation().location, blackAnt.getLocation());
+
+            site = redAnt.crossesCampSite(path);
+            expect(site).to.not.be.null;
+            site.id.should.equal(2);
+
+            done();
+        });
     });
 
 });
