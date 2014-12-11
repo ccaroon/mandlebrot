@@ -22,7 +22,8 @@ module.exports = function(grunt) {
                   Arena: true,
                   describe: true,
                   expect: true,
-                  it: true
+                  it: true,
+                  angular: true
                 }
             },
             file: [
