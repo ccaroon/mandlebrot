@@ -1,0 +1,17 @@
+<html ng-app="Ants">
+    <head>
+        <script src="../vendors/underscore/underscore-min.js"  type="application/javascript"></script>
+        <script src="components/models/geometry.js"  type="application/javascript"></script>
+        <script src="components/models/ant.js"       type="application/javascript"></script>
+        <script src="arena.js"                       type="application/javascript"></script>
+    </head>
+    <body style="background-color:black;">
+        <div align="center">
+            <canvas id="arena" style="width: 95%; height: 95%; margin: 0px; background-color: black;"></canvas>
+        </div>
+    </body>
+    <script>
+        var arena  = new Arena("arena");
+        arena.runSearch();
+    </script>
+</html>
