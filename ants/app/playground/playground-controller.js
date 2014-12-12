@@ -1,8 +1,8 @@
 angular.module("Playground", [])
-.controller("PlaygroundCtrl", ["$window", "$log", function ($window, $log) {
+.controller("PlaygroundCtrl", ["$window", function ($window) {
     var self = this, element;
 
-    $log.debug("PlaygroundCtrl");
+    self.isRunning = false;
 
     // Constants & Class Attrs
     self.DAY_LENGTH  = 125; // in ms
@@ -15,9 +15,6 @@ angular.module("Playground", [])
     self.display = element.getContext("2d");
     self.display.canvas.width  = self.width;
     self.display.canvas.height = self.height;
-
-    self.running = false;
-
 
     self.drawBoundaries = function() {
         self.display.strokeStyle = "white";
@@ -69,12 +66,13 @@ angular.module("Playground", [])
 
     };
 
-    self.eventLoop = function(thisAnt, otherAnt, thisInterval, otherInterval) {
-        var lastSite, site, path = null;
+    self.clear = function () {
+        self.display.fillStyle = "black";
+        self.display.fillRect(0,0,self.width, self.height);
+    };
 
-        if (!self.running) {
-            return;
-        }
+    self.eventLoop = function(thisAnt, otherAnt) {
+        var lastSite, site, path = null;
 
         if (thisAnt.isFollowing) {
             path = self.moveAnt(thisAnt);
@@ -107,8 +105,7 @@ angular.module("Playground", [])
         // Did thisAnt find otherAnt?
         if (thisAnt.getLocation().equals(otherAnt.getLocation())) {
             console.log(thisAnt + " has found " + otherAnt);
-            clearInterval(thisInterval);
-            clearInterval(otherInterval);
+            self.stop();
             thisAnt.color="green";
             self.placeMarker(thisAnt);
         }
@@ -117,14 +114,12 @@ angular.module("Playground", [])
         if (thisAnt.isDead() || thisAnt.age > (365*10)) {
             lastSite = thisAnt.lastCampSiteLocation();
             console.log(thisAnt + " died at camp site #"+lastSite.id);
-            clearInterval(thisInterval);
+            self.stop();
         }
 
     };
 
-    self.start = function () {
-        var a1, a2;
-
+    self.init = function () {
         self.ant1 = new Ant(
             "red",
             new Point(_.random(0, self.width), _.random(0, self.height))
@@ -134,23 +129,63 @@ angular.module("Playground", [])
             new Point(_.random(0, self.width), _.random(0, self.height))
         );
 
+        self.drawBoundaries();
+
         self.setCamp(self.ant1);
-        a1 = setInterval(function () {
-            self.eventLoop(self.ant1, self.ant2, a1, a2);
-        }, self.DAY_LENGTH);
-
         self.setCamp(self.ant2);
-        a2 = setInterval(function () {
-            self.eventLoop(self.ant2, self.ant1, a2, a1);
+    };
+
+    self.start = function () {
+        self.interval1 = setInterval(function () {
+            self.eventLoop(self.ant1, self.ant2);
         }, self.DAY_LENGTH);
 
-        self.running = true;
+        self.interval2 = setInterval(function () {
+            self.eventLoop(self.ant2, self.ant1);
+        }, self.DAY_LENGTH);
+
+        self.isRunning = true;
     };
 
     self.stop = function () {
-        self.running = false;        
+        clearInterval(self.interval1);
+        clearInterval(self.interval2);
+        self.isRunning = false;
     };
 
-    self.drawBoundaries();
+    self.reset = function () {
+        self.stop();
+        self.clear();
+        self.init();
+    };
+
+    self.step = function () {
+        self.eventLoop(self.ant1, self.ant2);
+        self.eventLoop(self.ant2, self.ant1);
+    };
+
+    self.isButtonDisabled = function (buttonName) {
+        var disabled = false;
+
+        switch (buttonName) {
+            case 'step':
+            case 'start':
+                if (self.isRunning === true) {
+                    disabled = true;
+                }
+                break;
+            case 'stop':
+                if (self.isRunning === false) {
+                    disabled = true;
+                }
+                break;
+            default:
+                disabled = false;
+        }
+
+        return (disabled);
+    };
+
+    self.init();
 
 }]);

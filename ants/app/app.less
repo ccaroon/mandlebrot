@@ -1,0 +1,41 @@
+@red: rgb(202, 60, 60);
+@green: rgb(28, 184, 65);
+@blue: rgb(66, 184, 221);
+@yellow: rgb(223, 117, 20);
+@white: #FFFFFF;
+
+.controls {
+    margin: 5px 25px 5px 25px;
+}
+
+.button {
+    color: @white;
+    border-radius: 4px;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+}
+
+.button-green {
+    .button;
+    background-color: @green;
+}
+
+.button-red {
+    .button;
+    background-color: @red;
+}
+
+.button-blue {
+    .button;
+    background-color: @blue;
+}
+
+.button-yellow {
+    .button;
+    background-color: @yellow;
+}
+
+.playground {
+    width: 95%;
+    height: 95%;
+    background-color: black;
+}

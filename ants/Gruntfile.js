@@ -37,10 +37,23 @@ module.exports = function(grunt) {
                 configFile: 'karma.conf.js',
                 singleRun: true
             }
+        },
+
+        less: {
+            app: {
+                options: {
+                    paths: ["app"]
+                },
+                files: {
+                    "app/app.css": "app/app.less"
+                }
+            }
         }
+
     });
 
     grunt.loadNpmTasks('grunt-contrib-jshint');
+    grunt.loadNpmTasks('grunt-contrib-less');
     grunt.loadNpmTasks('grunt-karma');
 
     // Default task(s).

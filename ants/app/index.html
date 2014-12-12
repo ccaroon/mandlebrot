@@ -1,5 +1,9 @@
 <html ng-app="Ants">
     <head>
+        <title>Ants</title>
+        <link href="../vendors/pure/pure-min.css" rel="stylesheet" type="text/css" />
+        <link href="app.css" rel="stylesheet" type="text/css" />
+
         <!-- vendor -->
         <script src="../vendors/underscore/underscore-min.js" type="application/javascript"></script>
         <script src="../vendors/angular/angular.js"       type="application/javascript"></script>
@@ -12,13 +16,15 @@
         <!-- main -->
         <script src="app.js" type="application/javascript"></script>
     </head>
-    <body style="background-color:black;" ng-controller="PlaygroundCtrl as ctrl">
-        <div>
-            <button ng-click="ctrl.start()">Start</button>
-            <button ng-click="ctrl.stop()">Stop</button>
+    <body ng-controller="PlaygroundCtrl as ctrl">
+        <div class="controls">
+            <button class="pure-button button-green" ng-disabled="ctrl.isButtonDisabled('start')" ng-click="ctrl.start()">Start</button>
+            <button class="pure-button button-red" ng-disabled="ctrl.isButtonDisabled('stop')" ng-click="ctrl.stop()">Stop</button>
+            <button class="pure-button button-yellow" ng-click="ctrl.reset()">Reset</button>
+            <button class="pure-button button-blue" ng-disabled="ctrl.isButtonDisabled('step')" ng-click="ctrl.step()">Step</button>
         </div>
         <div align="center">
-            <canvas id="playground" style="width: 95%; height: 95%; margin: 0px; background-color: black;"></canvas>
+            <canvas id="playground" class="playground"></canvas>
         </div>
     </body>
 </html>
