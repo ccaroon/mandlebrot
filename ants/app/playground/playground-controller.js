@@ -11,7 +11,7 @@ angular.module("Playground", [])
     self.width   = $window.innerWidth;
     self.height  = $window.innerHeight;
     
-    element = document.getElementById('playground');
+    element = $window.document.getElementById('playground');
     self.display = element.getContext("2d");
     self.display.canvas.width  = self.width;
     self.display.canvas.height = self.height;
