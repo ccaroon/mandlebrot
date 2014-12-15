@@ -150,7 +150,10 @@ angular.module("Playground", [])
     self.stop = function () {
         clearInterval(self.interval1);
         clearInterval(self.interval2);
+
         self.isRunning = false;
+        self.interval1 = null;
+        self.interval2 = null;
     };
 
     self.reset = function () {
@@ -160,8 +163,10 @@ angular.module("Playground", [])
     };
 
     self.step = function () {
-        self.eventLoop(self.ant1, self.ant2);
-        self.eventLoop(self.ant2, self.ant1);
+        if (self.isRunning === false) {
+            self.eventLoop(self.ant1, self.ant2);
+            self.eventLoop(self.ant2, self.ant1);
+        }
     };
 
     self.isButtonDisabled = function (buttonName) {
