@@ -97,6 +97,27 @@ describe("Playground: PlaygroundCtrl", function () {
         done();
     });
 
+    it("can place a marker", function (done) {
+        var currPos, lastCampPos;
+
+        ctrl.ant1.move();
+        ctrl.ant1.camp();
+
+        currPos = ctrl.ant1.getLocation();
+        lastCampPos = ctrl.ant1.lastCampSiteLocation();
+
+        ctrl.placeMarker(ctrl.ant1);
+
+        // site
+        ctrl.display.fillRect.should.have.been.calledWith(currPos.x-(Ant.CAMP_SIZE/2), currPos.y-(Ant.CAMP_SIZE/2), Ant.CAMP_SIZE, Ant.CAMP_SIZE);
+        // black "dot"
+        ctrl.display.fillRect.should.have.been.calledWith(currPos.x, currPos.y, 2, 2);
+        // fill last black "dot"
+        ctrl.display.fillRect.should.have.been.calledWith(lastCampPos.location.x, lastCampPos.location.y, 2, 2);
+
+        done();
+    });
+
     it("should be able to clear the playground", function (done) {
 
         ctrl.clear();
@@ -120,6 +141,10 @@ describe("Playground: PlaygroundCtrl", function () {
         ctrl.ant1.daysCamping.should.equal(0);
 
         done();
+    });
+
+    describe("eventLoop", function () {
+
     });
 
     it("can start the simulation", function(done) {
