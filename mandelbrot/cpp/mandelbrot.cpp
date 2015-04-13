@@ -56,6 +56,28 @@ void Mandelbrot::compute(int iterations) {
     }
 }
 // -----------------------------------------------------------------------------
+int* Mandelbrot::getRow(int row) {
+    return (this->buffer[row]);
+}
+// -----------------------------------------------------------------------------
+void Mandelbrot::display2(void) {
+    int x, y, *row;
+
+    for (y = 0; y < this->height; y++) {
+        row = this->getRow(y);
+
+        for (x = 0; x < this->width; x++) {
+            if (row[x] > 0) {
+                printf("+");
+            }
+            else {
+                printf(" ");
+            }
+        }
+        printf("\n");
+    }
+}
+// -----------------------------------------------------------------------------
 void Mandelbrot::display(void) {
     int x, y;
 

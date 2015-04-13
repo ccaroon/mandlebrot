@@ -12,4 +12,6 @@ public:
     Mandelbrot(int,int,int,int);
     void compute(int);
     void display(void);
+    void display2(void);
+    int* getRow(int);
 };
