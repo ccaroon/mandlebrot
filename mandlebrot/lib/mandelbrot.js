@@ -1,12 +1,12 @@
 //##############################################################################
-function Mandlebrot(xMin, xMax, yMin, yMax) {
+function Mandelbrot(xMin, xMax, yMin, yMax) {
   this.xMin = xMin;
   this.xMax = xMax;
   this.yMin = yMin;
   this.yMax = yMax;
 }
 //##############################################################################
-Mandlebrot.prototype.compute = function (iterations, canvas) {
+Mandelbrot.prototype.compute = function (iterations, canvas) {
   var x,y;
   var xStep, yStep;
   var z,zi,newZ,newZI;
@@ -59,4 +59,4 @@ Mandlebrot.prototype.compute = function (iterations, canvas) {
   }
 }
 //##############################################################################
-module.exports = Mandlebrot;
+module.exports = Mandelbrot;

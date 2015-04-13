@@ -1,7 +1,7 @@
 <html>
     <head>
-        <title>Mandlebrot (Canvas)</title>
-        <script src="lib/mandlebrot.js" type="application/javascript"></script>
+        <title>Mandelbrot (Canvas)</title>
+        <script src="lib/mandelbrot.js" type="application/javascript"></script>
         <script src="../shared/lib/html_canvas.js" type="application/javascript"></script>
     </head>
     <body>
@@ -9,12 +9,12 @@
             <button id="run">Run</button>
         </div>
         <div align="center">
-            <canvas id="mandlebrot" width="1400" height="900"></canvas>
+            <canvas id="mandelbrot" width="1400" height="900"></canvas>
         </div>
     </body>
     <script>
-        var m = new Mandlebrot(-2,1,-1,1),
-            c = new HtmlCanvas("mandlebrot");
+        var m = new Mandelbrot(-2,1,-1,1),
+            c = new HtmlCanvas("mandelbrot");
 
         m.compute(500, c);
     </script>
