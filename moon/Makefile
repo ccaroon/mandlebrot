@@ -1,4 +1,4 @@
-mandelbrot: moon_phase.cpp moon_phase.h
+moon_phase: moon_phase.cpp moon_phase.h
 	g++ moon_phase.cpp -o moon_phase
 
 clean:

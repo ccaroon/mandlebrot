@@ -29,22 +29,40 @@ void JulianToDate(TimePlace* now, double jd) {
 /******************************************************************************/
 /* Returns the number of julian days for the specified day.*/
 /******************************************************************************/
-double Julian(int year,int month,double day) {
-    int a,b,c,e;
-    
-    if (month < 3) {
-    	year--;
-    	month += 12;
+// double Julian(int year,int month,double day) {
+//     int a,b,c,e;
+//     
+//     if (month < 3) {
+//     	year--;
+//     	month += 12;
+//     }
+//     
+//     if (year > 1582 || (year == 1582 && month>10) || (year == 1582 && month==10 && day > 15)) {
+//     	a=year/100;
+//     	b=2-a+a/4;
+//     }
+//     c = 365.25*year;
+//     e = 30.6001*(month+1);
+// 
+//     return (b+c+e+day+1720994.5);
+// }
+/******************************************************************************/
+// See: http://quasar.as.utexas.edu/BillInfo/JulianDatesG.html
+/******************************************************************************/
+double Julian2(int year, int month, double day) {
+    if (month == 1 || month == 2) {
+            year -= 1;
+            month += 12;
     }
-    
-    if (year > 1582 || (year == 1582 && month>10) || (year == 1582 && month==10 && day > 15)) {
-    	a=year/100;
-    	b=2-a+a/4;
-    }
-    c = 365.25*year;
-    e = 30.6001*(month+1);
 
-    return (b+c+e+day+1720994.5);
+    double A = floor((double)year/100.00);
+    double B = floor(A/4.0);
+    double C = 2-A+B;
+    double E = floor(365.25*(year+4716));
+    double F = floor(30.6001*(month+1));
+    double JD = C+day+E+F-1524.5;
+
+    return (JD);
 }
 /******************************************************************************/
 double sun_position(double j) {
@@ -115,7 +133,7 @@ double moon_position(double j, double ls) {
 */
 /******************************************************************************/
 double moon_phase(int year,int month,int day, double hour, int* ip) {
-    double j= Julian(year,month,(double)day+hour/24.0)-2444238.5;
+    double j= Julian2(year,month,(double)day+hour/24.0)-2444238.5;
     double ls = sun_position(j);
     double lm = moon_position(j, ls);
 
@@ -128,7 +146,7 @@ double moon_phase(int year,int month,int day, double hour, int* ip) {
 
 static void nextDay(int* y, int* m, int* d, double dd) {
     TimePlace tp;
-    double jd = Julian(*y, *m, (double)*d);
+    double jd = Julian2(*y, *m, (double)*d);
     
     jd += dd;
     JulianToDate(&tp, jd);
@@ -138,7 +156,7 @@ static void nextDay(int* y, int* m, int* d, double dd) {
     *d = tp.day;
 }
 
-int main() {
+void by_year_and_month() {
     int y, m, d;
     int m0;
     int h;
@@ -212,5 +230,18 @@ int main() {
         nextDay(&y, &m, &d, 1.0);
         if (m != m0) break;
     }
+}
+
+int main () {
+    int n;
+
+    double phase = moon_phase(2015,4,27,13+4,&n);
+    phase = floor(phase*1000+0.5)/10;
+    printf("Phase [%f]\n", phase);
+//    double j1 = Julian(2015,  4, 27);
+//    double j2 = Julian2(2015, 4, 27);
+
+//    printf("J1[%f] J2[%f]\n", j1, j2);
+//    by_year_and_month();
     return 0;
 }
