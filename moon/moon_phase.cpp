@@ -1,58 +1,25 @@
 #include <stdio.h>
 #include <math.h>
-#include "moon_phase.h"
+#include <time.h>
 
-void JulianToDate(TimePlace* now, double jd) {
-    long jdi, b;
-    long c,d,e,g,g1;
+#define     PI  3.1415926535897932384626433832795
+#define     RAD (PI/180.0)
+#define     SMALL_FLOAT (1e-12)
 
-    jd += 0.5;
-    jdi = jd;
-    if (jdi > 2299160) {
-        long a = (jdi - 1867216.25)/36524.25;
-        b = jdi + 1 + a - a/4;
-    }
-    else b = jdi;
-
-    c = b + 1524;
-    d = (c - 122.1)/365.25;
-    e = 365.25 * d;
-    g = (c - e)/30.6001;
-    g1 = 30.6001 * g;
-    now->day = c - e - g1;
-    now->hour = (jd - jdi) * 24.0;
-    if (g <= 13) now->month = g - 1;
-    else now->month = g - 13;
-    if (now->month > 2) now->year = d - 4716;
-    else now->year = d - 4715;
-}
 /******************************************************************************/
 /* Returns the number of julian days for the specified day.*/
 /******************************************************************************/
-// double Julian(int year,int month,double day) {
-//     int a,b,c,e;
-//     
-//     if (month < 3) {
-//     	year--;
-//     	month += 12;
-//     }
-//     
-//     if (year > 1582 || (year == 1582 && month>10) || (year == 1582 && month==10 && day > 15)) {
-//     	a=year/100;
-//     	b=2-a+a/4;
-//     }
-//     c = 365.25*year;
-//     e = 30.6001*(month+1);
-// 
-//     return (b+c+e+day+1720994.5);
-// }
-/******************************************************************************/
-// See: http://quasar.as.utexas.edu/BillInfo/JulianDatesG.html
-/******************************************************************************/
-double Julian2(int year, int month, double day) {
-    if (month == 1 || month == 2) {
-            year -= 1;
-            month += 12;
+double julian(int year,int month, double day) {
+    int a,b,c,e;
+    
+    if (month < 3) {
+        year--;
+        month += 12;
+    }
+    
+    if (year > 1582 || (year == 1582 && month>10) || (year == 1582 && month==10 && day > 15)) {
+        a=year/100;
+        b=2-a+a/4;
     }
 
     double A = floor((double)year/100.00);
@@ -83,8 +50,8 @@ double sun_position(double j) {
     e=x;
     
     do {
-    	dl=e-.016718*sin(e)-x;
-    	e=e-dl/(1-.016718*cos(e));
+        dl=e-.016718*sin(e)-x;
+        e=e-dl/(1-.016718*cos(e));
     } while (fabs(dl)>=SMALL_FLOAT);
     
     v=360/PI*atan(1.01686011182*tan(e/2));
@@ -132,116 +99,43 @@ double moon_position(double j, double ls) {
       returns the moon phase as a real number (0-1)
 */
 /******************************************************************************/
-double moon_phase(int year,int month,int day, double hour, int* ip) {
-    double j= Julian2(year,month,(double)day+hour/24.0)-2444238.5;
+double moon_phase(int year, int month, int day, double hour) {
+    double j  = julian(year,month,(double)day+hour/24.0)-2444238.5;
     double ls = sun_position(j);
     double lm = moon_position(j, ls);
 
     double t = lm - ls;
     if (t < 0) t += 360;
-    *ip = (int)((t + 22.5)/45) & 0x7;
+//    *ip = (int)((t + 22.5)/45) & 0x7;
     
     return (1.0 - cos((lm - ls)*RAD))/2;
 }
 
-static void nextDay(int* y, int* m, int* d, double dd) {
-    TimePlace tp;
-    double jd = Julian2(*y, *m, (double)*d);
-    
-    jd += dd;
-    JulianToDate(&tp, jd);
-    
-    *y = tp.year;
-    *m = tp.month;
-    *d = tp.day;
-}
-
-void by_year_and_month() {
-    int y, m, d;
-    int m0;
-    int h;
-    int i;
-    double step = 1;
-    int begun = 0;
-
-    double pmax = 0;
-    double pmin = 1;
-    int ymax, mmax, dmax, hmax;
-    int ymin, mmin, dmin, hmin;
-    double plast = 0;
-
-    printf("tabulation of the phase of the moon for one month\n\n");
-
-    printf("year: "); fflush(stdout);
-    scanf("%d", &y);
-    
-    printf("month: "); fflush(stdout);
-    scanf("%d", &m);    
-
-    d = 1;
-    m0 = m;
-
-    printf("\nDate       Time   Phase Segment\n");
-    for (;;) {
-        double p;
-        int ip;
-        
-        for (h = 0; h < 24; h += step) {
-            
-            p = moon_phase(y, m, d, h, &ip);
-
-            if (begun) {
-                if (p > plast && p > pmax) {
-                    pmax = p;
-                    ymax = y;
-                    mmax = m;
-                    dmax = d;
-                    hmax = h;
-                }
-                else if (pmax) {
-                    printf("%04d/%02d/%02d %02d:00          (fullest)\n",
-                           ymax, mmax, dmax, hmax);
-                    pmax = 0;
-                }
-
-                if (p < plast && p < pmin) {
-                    pmin = p;
-                    ymin = y;
-                    mmin = m;
-                    dmin = d;
-                    hmin = h;
-                }
-                else if (pmin < 1) {
-                    printf("%04d/%02d/%02d %02d:00          (newest)\n",
-                           ymin, mmin, dmin, hmin);
-                    pmin = 1.0;
-                }
-            
-                if (h == 16) {
-                    printf("%04d/%02d/%02d %02d:00 %5.1f%%   (%d)\n",
-                           y, m, d, h, floor(p*1000+0.5)/10, ip);
-                }
-            }
-            else begun = 1;
-
-            plast = p;
-
-        }        
-        nextDay(&y, &m, &d, 1.0);
-        if (m != m0) break;
-    }
-}
 
 int main () {
-    int n;
+    double p;
+    int ip;
+    time_t raw_time;
+    struct tm* t;
 
-    double phase = moon_phase(2015,4,27,13+4,&n);
-    phase = floor(phase*1000+0.5)/10;
-    printf("Phase [%f]\n", phase);
-//    double j1 = Julian(2015,  4, 27);
-//    double j2 = Julian2(2015, 4, 27);
+    time(&raw_time);
+    t = localtime(&raw_time);
+    int month = t->tm_mon+1;
+    int day   = t->tm_mday;
+    int year  = t->tm_year + 1900;
 
-//    printf("J1[%f] J2[%f]\n", j1, j2);
-//    by_year_and_month();
-    return 0;
+    printf("%d/%d/%d\n", month, day, year);
+
+    double j = julian(year, month, day);
+    // j = 1736241.5;
+    printf("Julian Date [%f]\n", j);
+
+    double sp = sun_position(j);
+    printf("Sun Pos [%f]\n", sp);
+
+    double mp = moon_position(j, sp);
+    printf("Moon Pos [%f]\n", mp);    
+
+    p = moon_phase(t->tm_year+1900, t->tm_mon+1, t->tm_mday, t->tm_hour);
+    printf("%5.1f%%   (%d)\n", floor(p*1000+0.5)/10, ip);
 }
