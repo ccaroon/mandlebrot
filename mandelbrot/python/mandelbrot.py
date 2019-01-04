@@ -35,7 +35,7 @@ class Mandlebrot:
                         k = iterations
 
                 if inSet:
-                    pygame.draw.line(screen, Color.COLORS[0], (j,i),(j,i))
+                    pygame.draw.line(screen, Color.BLACK, (j,i),(j,i))
                 else:
                     pygame.draw.line(screen, Color.to_RGB(colour), (j,i),(j,i))
 
