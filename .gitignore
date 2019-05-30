@@ -3,3 +3,4 @@ node_modules/
 games_and_diversions.sublime-workspace
 bower_components/
 coverage/
+__pycache__
