@@ -8,6 +8,7 @@ candle = Item("candle")
 flashlight = Item("flashlight", "torch")
 lantern = Item("lantern")
 for item in [matches, candle, flashlight, lantern]:
-    item.isa.append('lightsource')
+    item.isa = ['lightsource']
 # ------------------------------------------------------------------------------
 key = Item("skeleton key", "master key", "key")
+#
