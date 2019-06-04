@@ -1,13 +1,17 @@
 #!/usr/bin/env python
 import adventurelib
-from adventurelib import *
 
 import random
+from lib.context import Context
+import lib.contexts as contexts
 import lib.commands
 
 # ------------------------------------------------------------------------------
 def prompt():
-    return "--> "
+    if Context.ACTIVE:
+        return F"999 - {Context.get()}> "
+    else:
+        return F"999> "
 adventurelib.prompt = prompt
 
 def invalid_command(cmd):
@@ -18,6 +22,7 @@ def invalid_command(cmd):
     ]))
 adventurelib.no_command_matches = invalid_command
 
-set_context("dark")
+Context.add(contexts.CHEATING)
+Context.add(contexts.LOCKED_IN)
 # ------------------------------------------------------------------------------
-start(help=False)
+adventurelib.start(help=True)

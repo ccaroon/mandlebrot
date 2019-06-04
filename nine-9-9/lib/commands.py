@@ -1,8 +1,17 @@
 from adventurelib import *
 
+import lib.contexts as contexts
+
+from lib.context import Context
 from lib.inventory import INVENTORY
 from lib.map import CURRENT_ROOM
 
+# ------------------------------------------------------------------------------
+# Game
+# ------------------------------------------------------------------------------
+@when("save")
+def save_state():
+    say("Saving has not yet been implemented!")
 # ------------------------------------------------------------------------------
 # Inventory Related Commands
 # ------------------------------------------------------------------------------
@@ -16,27 +25,22 @@ def view():
     else:
         print("You have nothing!")
 
-@when("pickup THING", action="pickup")
+@when("pick up THING", action="pickup")
 @when("search for THING", action="search")
 @when("take THING", action="take")
 def add_item(thing, action):
     item = CURRENT_ROOM.items.take(thing)
-    if get_context() == "dark":
-        if action == "search":
-            say(F"Not sure whether or not there's a {thing} about, you cautiously search your surroundings...")
-            if item and ("lightsource" in item.isa):
-                INVENTORY.add(item)
-                say(F"Et voila! A {item}!")
-                say(F"You ignite your newly discovered {item}. It's no longer pitch black!")
-                set_context(None)
-            else:
-                say(F"Nope. Nothing.")
+    if action == "search":
+        if item:
+            say(F"Your thorough and diligent searching has lead the discovery of {item}")
         else:
-            print(F"What {thing}? It's pitch black in here. You can't see ANYTHING!")
+            say(F"Your thorough and diligent searching has been for naught. You can't find {thing}.")
     else:
         if item:
             INVENTORY.add(item)
             print(F"You take the {thing}.")
+        else:
+            say(F"You don't see any {thing} here.")
 
 @when("drop THING")
 def remove_item(thing):
@@ -46,31 +50,66 @@ def remove_item(thing):
         say(F"Dropped {thing}.")
     else:
         say(F"You're not even carrying a {thing}.")
+
+@when("examine THING")
+@when("x THING")
+@when("look at THING")
+def examine(thing):
+    item = INVENTORY.find(thing)
+    if not item:
+        item = CURRENT_ROOM.objects.find(thing)
+
+    if item:
+        if item.desc:
+            say(item.desc)
+        else:
+            say(item)
+        
+        if item.state:
+            say(F"It's {item.state}.")
+    else:
+        say(F"You don't have any {thing}.")
 # ------------------------------------------------------------------------------
 # Room Related Commands
 # ------------------------------------------------------------------------------
 @when("l")
 @when("look")
 def look():
-    if INVENTORY.contains_some_sort_of('lightsource'):
-        set_context(None)
+    print(CURRENT_ROOM)
 
-        print(CURRENT_ROOM)
+    # TODO: better incorporate items in to the narrative
+    if CURRENT_ROOM.items:
+        print("\nLooking around you reveals: ")
+        for thing in CURRENT_ROOM.items:
+            print(thing)
 
-        if CURRENT_ROOM.items:
-            print("\nThere's several items scattered about: ")
-            for thing in CURRENT_ROOM.items:
-                print(thing)
+    # TODO: better incorporate exits in to the narrative
+    exits = CURRENT_ROOM.exits()
+    if exits:
+        print(F"\nExits: {exits}")
 
-        exits = CURRENT_ROOM.exits()
-        if exits:
-            print(F"\nExits: {exits}")
-    else:
-        set_context("dark")
-        print("It's pitch black. You can't see a thing.")
+@when("map")
+def map():
+    say("Sure would be nice to have a map of this place.")
 # ------------------------------------------------------------------------------
 # Movement
 # ------------------------------------------------------------------------------
+@when("exit")
+def leave():
+    global CURRENT_ROOM
+
+    if contexts.LOCKED_IN.is_active():
+        say("You're locked in!")
+    else:
+        exits = CURRENT_ROOM.exits()
+        if len(exits) > 1:
+            say(F"""
+                There's more than one way to leave this room. Which one would you like to try?
+                {exits}
+            """)
+        else:
+            CURRENT_ROOM = CURRENT_ROOM.exit(exits[0])
+
 @when('n', direction='north')
 @when('e', direction='east')
 @when('s', direction='south')
@@ -78,8 +117,8 @@ def look():
 def move(direction):
     global CURRENT_ROOM
 
-    if get_context() == 'dark':
-        print("It's pitch black. You probably shouldn't be moving around in here.")
+    if contexts.LOCKED_IN.is_active():
+        say("You're locked in!")
     else:
         room = CURRENT_ROOM.exit(direction)
         if room:
@@ -87,3 +126,31 @@ def move(direction):
             print(CURRENT_ROOM)
         else:
             print(F"You can't move {direction}.")
+# ------------------------------------------------------------------------------
+# Cheating
+# ------------------------------------------------------------------------------
+@when("context ACTION", context="cheating")
+def context(action):
+    if action == "clear":
+        Context.clear()
+        Context.add(contexts.CHEATING)
+    elif action == "show":
+        print(get_context())
+    elif action.startswith("add"):
+        status = action.replace("add", "")
+        ctx = Context(status.strip())
+        Context.add(ctx)
+
+@when("cheat ACTION", context="cheating")
+def cheat(action):
+    print(F"Unknown cheat command '{action}'.")
+
+
+
+
+
+
+
+
+
+# 

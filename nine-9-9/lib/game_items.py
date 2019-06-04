@@ -1,14 +1,12 @@
-from adventurelib import *
-
-Item.isa = []
+# from adventurelib import Item
+# Item.isa = []
+from lib.factory import build_item
 
 # ------------------------------------------------------------------------------
-matches = Item("box of matches", "book of matches", "matches")
-candle = Item("candle")
-flashlight = Item("flashlight", "torch")
-lantern = Item("lantern")
-for item in [matches, candle, flashlight, lantern]:
-    item.isa = ['lightsource']
+flashlight = build_item(
+    "flashlight", 
+    "It's one of those fancy LED flashlights. The batteries should last forever. Nifty!",
+    aliases=("torch", "flashlite"),
+    isa=['lightsource']
+)
 # ------------------------------------------------------------------------------
-key = Item("skeleton key", "master key", "key")
-#
