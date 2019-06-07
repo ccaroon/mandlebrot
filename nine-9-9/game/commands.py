@@ -41,21 +41,17 @@ def take_item1(thing, object):
     else:
         say(F"You don't see any {object} in here.")
 
-@when("pick up THING",    action="pickup")
-@when("search for THING", action="search")
-@when("take THING",       action="take")
-def take_item2(thing, action):
+@when("pick up THING")
+@when("take THING")
+def take_item2(thing):
     item = CURRENT_ROOM.items.take(thing)
-    if action == "search":
-        if item:
-            INVENTORY.add(item)
-            say(F"Your thorough and diligent searching has lead the discovery of {item}")
-        else:
-            say(F"Your thorough and diligent searching has been for naught. You can't find {thing}.")
+    if item:
+        INVENTORY.add(item)
+        print(F"You take the {thing}.")
     else:
-        if item:
-            INVENTORY.add(item)
-            print(F"You take the {thing}.")
+        obj = CURRENT_ROOM.objects.find(thing)
+        if obj:
+            say(F"You can't pick that up.")
         else:
             say(F"You don't see any {thing} here.")
 
@@ -120,6 +116,7 @@ def leave():
             """)
         else:
             CURRENT_ROOM = CURRENT_ROOM.exit(exits[0])
+            print(CURRENT_ROOM)
 
 @when('n', direction='north')
 @when('e', direction='east')
@@ -136,7 +133,7 @@ def move(direction):
             CURRENT_ROOM = room
             print(CURRENT_ROOM)
         else:
-            print(F"You can't move {direction}.")
+            say(F"You can't move {direction}.")
 # ------------------------------------------------------------------------------
 # Cheating
 # ------------------------------------------------------------------------------

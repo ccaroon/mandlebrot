@@ -21,3 +21,6 @@ class Space(Room):
         self.east = east
         self.south = south
         self.west = west
+
+    def __str__(self):
+        return F"--- {self.name} ---\n{self.description}"

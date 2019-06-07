@@ -2,7 +2,7 @@ from adventurelib import Bag, Item
 from colorama import Fore, Style
 
 class Object(Item):
-    def __init__(self, name, desc, aliases=[], isa=[], state=None, color=Fore.WHITE):
+    def __init__(self, name, desc, aliases=[], isa=[], state=None, color=Fore.LIGHTBLACK_EX):
         super().__init__(name, *aliases)
         self.isa = isa
         self.desc = desc
@@ -10,10 +10,6 @@ class Object(Item):
         self.color = color
         self.scene = None
         self.items = Bag()
-
-    # def link_to(self, obj):
-    #     self.items.add(obj)
-    #     obj.on = self
 
     def state_desc(self):
         desc = str(self)
