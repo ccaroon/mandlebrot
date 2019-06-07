@@ -1,4 +1,7 @@
+import pyfiglet
 from abc import ABC, abstractmethod
+
+import lib.utils as utils
 
 class CutScene:
 
@@ -9,8 +12,15 @@ class CutScene:
     def add_action(self, action, pause=True):
         self.__events.append(CutScene.Action(action, pause))
 
-    def add_dialogue(self, statement, pause=True):
-        self.__events.append(CutScene.Dialogue(statement, pause))
+    def add_dialogue(self, statement, enlarge=False, color=None, pause=True):
+        text = statement
+        if enlarge:
+            text = pyfiglet.figlet_format(statement)
+
+        if color:
+            text = utils.color_foreground(text, color)
+
+        self.__events.append(CutScene.Dialogue(text, pause))
 
     def play(self):
         # count = len(self.__events)

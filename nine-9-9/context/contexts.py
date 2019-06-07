@@ -1,4 +1,4 @@
-from lib.context import Context
+from .context import Context
 
 # LOCK_OPEN = '🔓'
 # KEY = '🗝'

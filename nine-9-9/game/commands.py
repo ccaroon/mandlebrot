@@ -1,10 +1,10 @@
 from adventurelib import *
 
-import lib.contexts as contexts
+import context.contexts as contexts
+from context.context import Context
 
-from lib.context import Context
-from lib.inventory import INVENTORY
-from lib.map import CURRENT_ROOM
+from inventory import INVENTORY
+from rooms import CURRENT_ROOM
 
 # ------------------------------------------------------------------------------
 # Game
@@ -25,10 +25,26 @@ def view():
     else:
         print("You have nothing!")
 
-@when("pick up THING", action="pickup")
+@when("take THING from OBJECT")
+@when("take THING off OBJECT")
+@when("remove THING from OBJECT")
+def take_item1(thing, object):
+    obj = CURRENT_ROOM.objects.find(object)
+    
+    if obj:
+        item = obj.items.take(thing)
+        if item:
+            INVENTORY.add(item)
+            say(F"You remove the {item} from the {obj}.")
+        else:
+            say(F"You don't see a {thing} on the {object}")
+    else:
+        say(F"You don't see any {object} in here.")
+
+@when("pick up THING",    action="pickup")
 @when("search for THING", action="search")
-@when("take THING", action="take")
-def add_item(thing, action):
+@when("take THING",       action="take")
+def take_item2(thing, action):
     item = CURRENT_ROOM.items.take(thing)
     if action == "search":
         if item:
@@ -61,13 +77,7 @@ def examine(thing):
         item = CURRENT_ROOM.objects.find(thing)
 
     if item:
-        if item.desc:
-            say(item.desc)
-        else:
-            say(item)
-        
-        if item.state:
-            say(F"It's {item.state}.")
+        say(item.describe())
     else:
         say(F"You don't have any {thing}.")
 # ------------------------------------------------------------------------------

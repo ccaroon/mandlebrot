@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 import adventurelib
-
 import random
-from lib.context import Context
-import lib.contexts as contexts
-import lib.commands
-import lib.scenes as scenes
+
+import context.contexts as contexts
+from context.context import Context
+
+import game.commands
+from scenes.intro import scene as intro
 
 # ------------------------------------------------------------------------------
 def prompt():
@@ -23,8 +24,8 @@ def invalid_command(cmd):
     ]))
 adventurelib.no_command_matches = invalid_command
 
-# Context.add(contexts.CHEATING)
+Context.add(contexts.CHEATING)
 Context.add(contexts.LOCKED_IN)
 # ------------------------------------------------------------------------------
-scenes.intro.play()
+intro.play()
 adventurelib.start(help=True)

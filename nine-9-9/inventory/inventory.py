@@ -9,5 +9,3 @@ class Inventory(Bag):
                 break
 
         return found
-
-INVENTORY = Inventory()
