@@ -32,6 +32,7 @@ def add_item(thing, action):
     item = CURRENT_ROOM.items.take(thing)
     if action == "search":
         if item:
+            INVENTORY.add(item)
             say(F"Your thorough and diligent searching has lead the discovery of {item}")
         else:
             say(F"Your thorough and diligent searching has been for naught. You can't find {thing}.")

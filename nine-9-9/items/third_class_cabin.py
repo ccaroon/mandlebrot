@@ -1,5 +1,3 @@
-# from adventurelib import Item
-# Item.isa = []
 from lib.factory import build_item
 
 # ------------------------------------------------------------------------------

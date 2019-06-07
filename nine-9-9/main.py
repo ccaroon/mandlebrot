@@ -5,6 +5,7 @@ import random
 from lib.context import Context
 import lib.contexts as contexts
 import lib.commands
+import lib.scenes as scenes
 
 # ------------------------------------------------------------------------------
 def prompt():
@@ -22,7 +23,8 @@ def invalid_command(cmd):
     ]))
 adventurelib.no_command_matches = invalid_command
 
-Context.add(contexts.CHEATING)
+# Context.add(contexts.CHEATING)
 Context.add(contexts.LOCKED_IN)
 # ------------------------------------------------------------------------------
+scenes.intro.play()
 adventurelib.start(help=True)
