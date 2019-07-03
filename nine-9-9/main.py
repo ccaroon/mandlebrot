@@ -27,5 +27,5 @@ adventurelib.no_command_matches = invalid_command
 Context.add(contexts.CHEATING)
 Context.add(contexts.LOCKED_IN)
 # ------------------------------------------------------------------------------
-intro.play()
+# intro.play()
 adventurelib.start(help=True)

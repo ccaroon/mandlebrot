@@ -5,9 +5,14 @@ import lib.utils as utils
 
 class CutScene:
 
-    def __init__(self, name):
+    def __init__(self, name, on_going=False):
         self.__name = name
         self.__events = []
+
+        # Number of times allowed to run
+        self.__run_count = 1
+        if on_going:
+            self.__run_count = 9999999
 
     def add_action(self, action, pause=True):
         self.__events.append(CutScene.Action(action, pause))
@@ -23,13 +28,14 @@ class CutScene:
         self.__events.append(CutScene.Dialogue(text, pause))
 
     def play(self):
-        # count = len(self.__events)
-        for i, event in enumerate(self.__events):
-            event.run()
-            # prompt = F"{i+1}/{count}".center(80, "-")
-            # input(prompt)
-            if event.pause:
-                input()
+        if self.__run_count > 0:
+            self.__run_count -= 1
+            for i, event in enumerate(self.__events):
+                event.run()
+                # prompt = F"{i+1}/{count}".center(80, "-")
+                # input(prompt)
+                if event.pause:
+                    input()
 
     # Sub Classes
     class Event(ABC):
