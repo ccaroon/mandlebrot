@@ -1,3 +1,4 @@
 adventurelib
 colorama
 pyfiglet
+scriptum

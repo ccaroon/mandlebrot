@@ -1,11 +1,13 @@
 from adventurelib import *
 
-import context.contexts as contexts
-from context.context import Context
+import contexts
+from scriptum.context import Context
 
-from inventory import INVENTORY
-from rooms import CURRENT_ROOM
+from rooms.third_class_cabin import room as third_class_cabin
+CURRENT_ROOM = third_class_cabin
 
+from scriptum.inventory import Inventory
+INVENTORY = Inventory()
 # ------------------------------------------------------------------------------
 # Game
 # ------------------------------------------------------------------------------
@@ -30,7 +32,7 @@ def view():
 @when("remove THING from OBJECT")
 def take_item1(thing, object):
     obj = CURRENT_ROOM.objects.find(object)
-    
+
     if obj:
         item = obj.items.take(thing)
         if item:
@@ -161,4 +163,4 @@ def cheat(action):
 
 
 
-# 
+#

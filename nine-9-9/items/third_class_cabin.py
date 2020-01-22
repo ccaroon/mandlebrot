@@ -1,8 +1,7 @@
 from colorama import Fore
 
-import rooms
-from inventory.object import Object
-from scenes.cut_scene import CutScene
+from scriptum.object import Object
+from scriptum.scene import Scene
 # ------------------------------------------------------------------------------
 # ITEMS - Things that can be picked up and carried in the inventory
 # ------------------------------------------------------------------------------
@@ -57,7 +56,7 @@ table = Object(
 )
 
 porthole = Object(
-    "porthole", 
+    "porthole",
     "A smallish, round window. It's too dark and foggy outside to see anything.",
     aliases=("window",),
     state="closed",
@@ -66,14 +65,14 @@ porthole = Object(
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
-# SCENES - 
+# SCENES -
 # ------------------------------------------------------------------------------
-pillow.scene = CutScene("Move Pillow")
+pillow.scene = Scene("Move Pillow")
 pillow.scene.add_dialogue(F"""
 You move the pillow aside revealing a {note_1}
 """)
 # ------------------------------------------------------------------------------
-mirror.scene = CutScene("Mirror Reveal")
+mirror.scene = Scene("Mirror Reveal")
 mirror.scene.add_dialogue(F"""
 The mirror is covered with a pull-down shade for some odd reason. As you reach out to touch it the shade suddenly rolls itself up.
 Ah! There you are.
@@ -84,7 +83,7 @@ You see a {red_key} taped to the mirror.
 def end_portal_cracking():
     porthole.state = "has blown wide open; water is pouring into the room"
 
-porthole.scene = CutScene("Portal Cracking")
+porthole.scene = Scene("Portal Cracking")
 porthole.scene.add_dialogue(F"""
 You look out the porthole into the dark and foggy night. You can't really see anything. However, the presence of a porthole makes you feel
 pretty surely that you are definetely on a ship.

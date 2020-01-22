@@ -1,4 +1,4 @@
-from .context import Context
+from scriptum.context import Context
 
 # LOCK_OPEN = '🔓'
 # KEY = '🗝'

@@ -1,10 +1,10 @@
 from colorama import Fore
 
-import lib.utils as utils
-from .cut_scene import CutScene
+from scriptum.screen import Screen
+from scriptum.scene import Scene
 
-scene = CutScene("Intro")
-scene.add_action(utils.clear_screen, pause=False)
+scene = Scene("Intro")
+scene.add_action(Screen.clear, pause=False)
 scene.add_dialogue("999",          enlarge=True, color=Fore.RED)
 scene.add_dialogue("Nine Hours",   enlarge=True, color=Fore.WHITE)
 scene.add_dialogue("Nine Persons", enlarge=True, color=Fore.WHITE)

@@ -2,10 +2,10 @@
 import adventurelib
 import random
 
-import context.contexts as contexts
-from context.context import Context
+import contexts
+from scriptum.context import Context
 
-import game.commands
+import commands
 from scenes.intro import scene as intro
 
 # ------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ def invalid_command(cmd):
     ]))
 adventurelib.no_command_matches = invalid_command
 
-Context.add(contexts.CHEATING)
+# Context.add(contexts.CHEATING)
 Context.add(contexts.LOCKED_IN)
 # ------------------------------------------------------------------------------
 # intro.play()
